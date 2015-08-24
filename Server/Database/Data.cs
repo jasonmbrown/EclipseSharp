@@ -18,32 +18,37 @@ namespace Server.Database {
         #endregion
 
         #region Methods
-        public static void LoadSettings(String filename) {
-            // Load up our XML file and parse the settings!
-            var xml = XElement.Load(filename);
-            var dic = new Dictionary<String, String>();
-            foreach (var setting in xml.Elements()) {
-                dic.Add(setting.Attribute("key").Value, setting.Attribute("value").Value);
+        public static void LoadSettings(string filename) {
+            // load our data.
+            if (File.Exists(filename)) {
+                var ser = new System.Xml.Serialization.XmlSerializer(Data.Settings.GetType());
+                using (var fs = File.OpenRead(filename)) {
+                    Data.Settings = (Settings)ser.Deserialize(fs);
+                }
+            } else {
+                Data.Settings.GameName          = "EclipseSharp";
+                Data.Settings.Port              = 7001;
+                Data.Settings.MaxPlayers        = 100;
+                Data.Settings.MOTD              = "Welcome online.";
+                Data.Settings.MinUsernameChar   = 3;
+                Data.Settings.MaxUsernameChar   = 20;
+                Data.Settings.MinPasswordChar   = 3;
+                Data.Settings.MaxPasswordChar   = 20;
+                Data.Settings.MaxCharacters     = 3;
+                Data.Settings.MaxClasses        = 3;                
+                Data.SaveSettings(filename);
             }
+        }
 
-            // Now apply them to the actual settings object.
-            Settings.Port               = dic["port"].ToInt32();
-            Settings.MaxPlayers         = dic["maxplayers"].ToInt32();
+        private static void SaveSettings(String filename) {
+            // Delete a file should it already exist.
+            if (File.Exists(filename)) File.Delete(filename);
 
-            Settings.GameName           = dic["gamename"];
-            Settings.MOTD               = dic["motd"];
-            Settings.Website            = dic["website"];
-
-            Settings.MaxPasswordChar    = dic["maxpasswordchar"].ToInt32();
-            Settings.MinPasswordChar    = dic["minpasswordchar"].ToInt32();
-            Settings.MaxUsernameChar    = dic["maxusernamechar"].ToInt32();
-            Settings.MinUsernameChar    = dic["minusernamechar"].ToInt32();
-            Settings.StartMap           = dic["startmap"].ToInt32();
-            Settings.StartX             = (Byte)dic["startx"].ToInt32();
-            Settings.StartY             = (Byte)dic["starty"].ToInt32();
-
-            Settings.MaxClasses         = dic["maxclasses"].ToInt32();
-            Settings.MaxCharacters      = dic["maxcharacters"].ToInt32();
+            // Serialize our object and throw it to a file!
+            var ser = new System.Xml.Serialization.XmlSerializer(Data.Settings.GetType());
+            using (var fs = File.OpenWrite(filename)) {
+                ser.Serialize(fs, Data.Settings);
+            }
         }
         public static void InitData() {
             // This method loads our data into the server.

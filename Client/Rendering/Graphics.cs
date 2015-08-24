@@ -33,10 +33,10 @@ namespace Client.Rendering {
 
             // Initialize the UI.
             Interface.InitGUI(Screen);
-            Interface.ChangeUI(Database.Enumerations.Windows.Loading);
+            Interface.ChangeUI(Interface.Windows.Loading);
 
             // Done loading! Start the real menu.
-            Interface.ChangeUI(Database.Enumerations.Windows.MainMenu);
+            Interface.ChangeUI(Interface.Windows.MainMenu);
 
             // Move on to rendering the window.
             Graphics.RenderScreen();

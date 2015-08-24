@@ -103,7 +103,6 @@
   <ItemGroup>
     <Compile Include="Database\Classes\Settings.cs" />
     <Compile Include="Database\Data.cs" />
-    <Compile Include="Database\Enumerations.cs" />
     <Compile Include="Logic\UIHandlers.cs" />
     <Compile Include="Rendering\Graphics.cs" />
     <Compile Include="Program.cs" />

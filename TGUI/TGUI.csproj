@@ -102,13 +102,13 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="sfmlnet-graphics-2">
-      <HintPath>..\..\..\..\..\..\..\EclipseSharp\Client\libs\sfmlnet-graphics-2.dll</HintPath>
+      <HintPath>..\Client\libs\sfmlnet-graphics-2.dll</HintPath>
     </Reference>
     <Reference Include="sfmlnet-system-2">
-      <HintPath>..\..\..\..\..\..\..\EclipseSharp\Client\libs\sfmlnet-system-2.dll</HintPath>
+      <HintPath>..\Client\libs\sfmlnet-system-2.dll</HintPath>
     </Reference>
     <Reference Include="sfmlnet-window-2">
-      <HintPath>..\..\..\..\..\..\..\EclipseSharp\Client\libs\sfmlnet-window-2.dll</HintPath>
+      <HintPath>..\Client\libs\sfmlnet-window-2.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />

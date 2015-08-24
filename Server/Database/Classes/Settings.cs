@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Server.Database {
-    class Settings {
+    public class Settings {
         // Server Settings
         public Int32    Port                { get; set; }
         public Int32    MaxPlayers          { get; set; }
