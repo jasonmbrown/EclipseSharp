@@ -18,17 +18,15 @@ namespace Server.Networking {
         };
 
         public static void Handle(Int32 id, DataBuffer buffer) {
-            // Retrieve our client's packet and pass it on to the appropriate method where possible.
-            var junk = buffer.ReadInt32();       // Accomodates for VB6's length affix
             var packet = (Packets.Client)buffer.ReadInt32();
-            Handlers.TryGet(packet, (i, b) => { /* Do Nothing! */ })(id, buffer);   
+            Handlers.TryGet(packet, (i, b) => { /* Do Nothing */ })(id, buffer);   
         }
 
         public static void ClientConnected(Int32 id) {
             if (Data.Players.ContainsKey(id)) return;
 
             // Create ourselves a brand new Player class and assign it to the appropriate ID.
-            var temp = new Player(Data.Settings.MaxCharacters);
+            var temp = new Player();
             var tempp = new TempPlayer();
             Data.Players.Add(id, temp);
             Data.TempPlayers.Add(id, tempp);

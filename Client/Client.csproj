@@ -104,6 +104,10 @@
     <Compile Include="Database\Classes\Settings.cs" />
     <Compile Include="Database\Data.cs" />
     <Compile Include="Logic\UIHandlers.cs" />
+    <Compile Include="Networking\Classes\Client.cs" />
+    <Compile Include="Networking\HandleData.cs" />
+    <Compile Include="Networking\PacketHandler.cs" />
+    <Compile Include="Networking\Send.cs" />
     <Compile Include="Rendering\Graphics.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

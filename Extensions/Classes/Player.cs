@@ -15,11 +15,11 @@ namespace Extensions.Database {
         #endregion
 
         #region Constructors
-        public Player(Int32 maxcharacters) {
+        public Player() {
             this.Username       = String.Empty;
             this.Password       = String.Empty;
             this.Salt           = String.Empty;
-            this.Characters = new Character[maxcharacters];
+            this.Characters = new Character[3];
         }
         #endregion
 

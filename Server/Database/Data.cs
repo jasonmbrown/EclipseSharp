@@ -33,7 +33,6 @@ namespace Server.Database {
                 Data.Settings.MaxUsernameChar   = 20;
                 Data.Settings.MinPasswordChar   = 3;
                 Data.Settings.MaxPasswordChar   = 20;
-                Data.Settings.MaxCharacters     = 3;
                 Data.Settings.MaxClasses        = 3;                
                 Data.SaveSettings(filename);
             }
@@ -65,7 +64,6 @@ namespace Server.Database {
         public static void CheckDirectories() {
             if (!Directory.Exists(Data.AppPath + "data files\\accounts")) Directory.CreateDirectory(Data.AppPath + "data files\\accounts");
             if (!Directory.Exists(Data.AppPath + "data files\\classes")) Directory.CreateDirectory(Data.AppPath + "data files\\classes");
-            if (!Directory.Exists(Data.AppPath + "data files\\sounds")) Directory.CreateDirectory(Data.AppPath + "data files\\sounds");
         }
         public static void SaveClasses() {
             for (var i = 0; i < Data.Settings.MaxClasses; i++) {

@@ -20,10 +20,12 @@ namespace Client.Rendering {
             Register
         }
 
-        public static Gui                                                   GUI;
-        private static Windows                                              CurrentUI;
-        private static String                                               Theme;
-        private static Dictionary<Windows, Action>    Interfaces = new Dictionary<Windows, Action>() {
+        public static   Gui                                                   GUI;
+        public static   Windows                                               LastWindow;
+        public static   List<Object>                                          LastData = new List<Object>();
+        private static  Windows                                               CurrentUI;
+        private static  String                                                Theme;
+        private static  Dictionary<Windows, Action>    Interfaces = new Dictionary<Windows, Action>() {
             { Windows.Loading,  CreateLoadMenu },
             { Windows.MainMenu, CreateMainMenu },
             { Windows.Register, CreateRegisterMenu }
@@ -68,10 +70,33 @@ namespace Client.Rendering {
             label.Text = text;
             label.TextSize = 16;
             label.TextColor = Color.Black;
-            mbox.Size = new Vector2f(label.Size.X + 10, label.Size.Y + 10);
+            mbox.Size = new Vector2f(label.Size.X + 10, label.Size.Y + 50);
             label.Position = new Vector2f(5, 5);
             mbox.Position = new Vector2f((resx / 2) - (mbox.Size.X / 2), (resy / 2) - (mbox.Size.Y / 2));
-            mbox.ClosedCallback += (o, e) => { GUI.Remove("mbox"); };
+            mbox.ClosedCallback += UIHandlers.Messagebox_OKClick;
+            var button = mbox.Add(new Button(Theme));
+            button.Text = "OK";
+            button.Position = new Vector2f((mbox.Size.X / 2) - (button.Size.X / 2), mbox.Size.Y - (button.Size.Y + 5));
+            button.LeftMouseClickedCallback += UIHandlers.Messagebox_OKClick;
+        }
+        public static void ShowAlertbox(String title, String text) {
+            var resx = Data.Settings.Graphics.ResolutionX;
+            var resy = Data.Settings.Graphics.ResolutionY;
+
+            var mbox = GUI.Add(new MessageBox(Theme), "mbox");
+            mbox.Title = title;
+            var label = mbox.Add(new Label(Theme));
+            label.Text = text;
+            label.TextSize = 16;
+            label.TextColor = Color.Black;
+            mbox.Size = new Vector2f(label.Size.X + 10, label.Size.Y + 50);
+            label.Position = new Vector2f(5, 5);
+            mbox.Position = new Vector2f((resx / 2) - (mbox.Size.X / 2), (resy / 2) - (mbox.Size.Y / 2));
+            mbox.ClosedCallback += UIHandlers.Alertbox_OKClick;
+            var button = mbox.Add(new Button(Theme));
+            button.Text = "OK";
+            button.Position = new Vector2f((mbox.Size.X / 2) - (button.Size.X / 2), mbox.Size.Y - (button.Size.Y + 5));
+            button.LeftMouseClickedCallback += UIHandlers.Alertbox_OKClick;
         }
         private static void CreateLoadMenu() {
             var resx                = Data.Settings.Graphics.ResolutionX;

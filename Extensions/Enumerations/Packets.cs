@@ -6,7 +6,8 @@ namespace Extensions {
         public enum Client {
             NewAccount,
             Login,
-            AddCharacter
+            AddCharacter,
+            RequestMaxData
         }
 
         public enum Server {

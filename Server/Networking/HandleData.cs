@@ -13,7 +13,6 @@ namespace Server.Networking {
             // TODO
             throw new NotImplementedException();
         }
-
         public static void HandleNewAccount(Int32 id, DataBuffer buffer) {
             // Handles a user's request to register an account.
             var username = buffer.ReadString().Trim();
@@ -23,21 +22,18 @@ namespace Server.Networking {
             // Check if the user isn't sending too long/short data.
             if (username.Trim().Length < Data.Settings.MinUsernameChar || username.Trim().Length > Data.Settings.MaxUsernameChar || password.Trim().Length < Data.Settings.MinPasswordChar || password.Trim().Length > Data.Settings.MaxPasswordChar) {
                 Send.AlertMessage(id, String.Format("Your username must be between {0} and {1} characters long. Your password must be between {2} and {3} characters long.", Data.Settings.MinUsernameChar, Data.Settings.MaxUsernameChar, Data.Settings.MinPasswordChar, Data.Settings.MaxPasswordChar));
-                buffer.Dispose();
                 return;
             }
 
             // Check if the user isn't sending any unallowed characters.
             if (!legal.IsMatch(username)) {
                 Send.AlertMessage(id, "Invalid username, only letters and numbers are allowed in names.");
-                buffer.Dispose();
                 return;
             }
 
             // Check if this account already exists.
             if (File.Exists(String.Format("{0}data files\\accounts\\{1}.xml", Data.AppPath, username))) {
                 Send.AlertMessage(id, "Sorry, that account name is already taken!");
-                buffer.Dispose();
                 return;
             }
 
@@ -47,6 +43,7 @@ namespace Server.Networking {
 
             // Save the player!
             Data.SavePlayer(id);
+            Logger.Write(String.Format("ID: {0} has created a new account.", id));
 
             // Send our player the data required to create a new character!
             Send.NewCharacterClasses(id);
@@ -61,21 +58,18 @@ namespace Server.Networking {
             // Make sure the name is at least X characters long.
             if (name.Length < Data.Settings.MinUsernameChar) {
                 Send.AlertMessage(id, String.Format("Character name must be at least {0} characters in length.", Data.Settings.MinUsernameChar));
-                buffer.Dispose();
                 return;
             }
 
             // Make sure they only entered regular characters.
             if (!legal.IsMatch(name)) {
                 Send.AlertMessage(id, "Invalid name, only letters and numbers are allowed in names.");
-                buffer.Dispose();
                 return;
             }
 
             // Check if the name is already in use or not.
             if (Data.Characters.Contains(name)) {
                 Send.AlertMessage(id, "A character with this name already exists!");
-                buffer.Dispose();
                 return;
             }
 

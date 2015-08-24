@@ -14,10 +14,8 @@ namespace Extensions.Networking {
             this.Stream = new MemoryStream();
         }
         public void Dispose() {
-            try {
-                this.Stream.Dispose();
-                this.Stream = null;
-            } catch { }
+            this.Stream.Dispose();
+            this.Stream = null;
         }
         #endregion
 
@@ -50,12 +48,27 @@ namespace Extensions.Networking {
             var data = BitConverter.GetBytes(value);
             this.Stream.Write(data, 0, 4);
         }
+        public void WriteInt64(Int64 value) {
+            var data = BitConverter.GetBytes(value);
+            this.Stream.Write(data, 0, 8);
+        }
+        public void WriteChar(Char value) {
+            var data = BitConverter.GetBytes(value);
+            this.Stream.Write(data, 0, 2);
+        }
         public void WriteString(String value) {
             var l = value.Length;
             this.WriteInt32(l);
             foreach (var c in value) {
-                this.WriteByte((Byte)c);
+                this.WriteChar(c);
             }
+        }
+        public void WriteBoolean(Boolean value) {
+            var data = BitConverter.GetBytes(value);
+            this.Stream.Write(data, 0, 1);
+        }
+        public void WriteDateTime(DateTime value) {
+            this.WriteInt64((Int64)value.ToBinary());
         }
         #endregion
 
@@ -75,13 +88,31 @@ namespace Extensions.Networking {
             this.Stream.Read(data, 0, 4);
             return BitConverter.ToInt32(data, 0);
         }
+        public Int64 ReadInt64() {
+            var data = new Byte[8];
+            this.Stream.Read(data, 0, 8);
+            return BitConverter.ToInt64(data, 0);
+        }
+        public Char ReadChar() {
+            var data = new Byte[2];
+            this.Stream.Read(data, 0, 2);
+            return BitConverter.ToChar(data, 0);
+        }
         public String ReadString() {
             var d = new List<Char>();
             var l = this.ReadInt32();
             for (var i = 0; i < l; i++) {
-                d.Add((Char)this.ReadByte());
+                d.Add(this.ReadChar());
             }
             return string.Join("", d.ToArray());
+        }
+        public Boolean ReadBoolean() {
+            var data = new Byte[1];
+            this.Stream.Read(data, 0, 1);
+            return BitConverter.ToBoolean(data, 0);
+        }
+        public DateTime ReadDateTime() {
+            return DateTime.FromBinary(this.ReadInt64());
         }
         #endregion
     }

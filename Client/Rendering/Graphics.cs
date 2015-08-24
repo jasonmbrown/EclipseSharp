@@ -41,7 +41,9 @@ namespace Client.Rendering {
             // Move on to rendering the window.
             Graphics.RenderScreen();
         }
-
+        public static void CloseScreen() {
+            WindowClosed(null, null);
+        }
         private static void RenderScreen() {
             while (Screen.IsOpen) {
                 // Clear the screen of all data.
@@ -55,19 +57,15 @@ namespace Client.Rendering {
                 Screen.Display();
             }
         }
-
         private static void WindowMouseMoved(object sender, MouseMoveEventArgs e) {
             
         }
-
         private static void WindowMousePressed(object sender, MouseButtonEventArgs e) {
             
         }
-
         private static void WindowKeyPressed(object sender, KeyEventArgs e) {
             
         }
-
         private static void WindowClosed(object sender, EventArgs e) {
             // Destroy all graphical elements!.
             // TODO: Destroy Graphics.

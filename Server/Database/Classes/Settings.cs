@@ -21,7 +21,6 @@ namespace Server.Database {
         public Byte     StartY              { get; set; }
 
         // Max Settings
-        public Int32    MaxCharacters       { get; set; }
         public Int32    MaxClasses          { get; set; }
     }
 }

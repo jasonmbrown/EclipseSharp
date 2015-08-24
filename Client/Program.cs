@@ -2,12 +2,14 @@
 using Client.Rendering;
 using Client.Database;
 using System.Threading;
+using Client.Networking;
 
 namespace Client {
-    static class Program {
+    public static class Program {
 
         #region Declares
         public static Thread GThread;
+        public static Networking.Client NetworkClient;
 
         private static ManualResetEvent KeepAlive = new ManualResetEvent(false);
         #endregion
@@ -33,6 +35,14 @@ namespace Client {
             obj[3] = Data.Settings.Graphics.Fullscreen;
             GThread = new Thread(new ParameterizedThreadStart(Graphics.InitWindow));
             GThread.Start(obj);
+
+            // Set up our Network stuff.
+            NetworkClient = new Networking.Client();
+            NetworkClient.ConnectedHandler += PacketHandler.ClientConnected;
+            NetworkClient.PacketHandler += PacketHandler.Handle;
+
+            // Open our connection!
+            NetworkClient.Open(Data.Settings.Network.IPAddress, Data.Settings.Network.Port);
 
             // Set up our timers with Logic handlers.
             

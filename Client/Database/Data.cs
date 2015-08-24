@@ -13,6 +13,7 @@ namespace Client.Database {
         public static void CheckDirectories() {
             if (!Directory.Exists(Data.AppPath + "data files\\tilesets")) Directory.CreateDirectory(Data.AppPath + "data files\\tilesets");
             if (!Directory.Exists(Data.AppPath + "data files\\interface")) Directory.CreateDirectory(Data.AppPath + "data files\\interface");
+            if (!Directory.Exists(Data.AppPath + "data files\\sounds")) Directory.CreateDirectory(Data.AppPath + "data files\\sounds");
         }
         public static void LoadSettings() {
             var filename = String.Format("{0}data files\\settings.xml", Data.AppPath);
