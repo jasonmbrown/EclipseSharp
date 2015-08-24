@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<settings>
+	<!-- Server Settings -->
+	<setting key="port" value="7001" />
+	<setting key="maxplayers" value="100" />
+
+	<!-- Game Settings -->
+	<setting key="gamename" value="EclipseSharp" />
+	<setting key="motd" value="Welcome Online!" />
+	<setting key="website" value="http://www.eclipseorigins.com/" />
+
+  <!-- Account Settings -->
+  <setting key="minusernamechar" value="3" />
+  <setting key="maxusernamechar" value="20" />
+  <setting key="minpasswordchar" value="3" />
+  <setting key="maxpasswordchar" value="20" />
+  <setting key="startmap" value="1"/>
+  <setting key="startx" value="8"/>
+  <setting key="starty" value="7"/>
+  
+	<!-- Max Values -->
+  <setting key="maxclasses" value="3" />
+  <setting key="maxcharacters" value="3" />
+</settings>

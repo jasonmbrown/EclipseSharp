@@ -1,0 +1,47 @@
+﻿using System;
+using Extensions;
+using Server.Database;
+using Server.Logic;
+using System.Collections.Generic;
+
+namespace Server.Networking {
+    static class PacketHandler {
+
+        // Set up our dictionary that'll contain the link between our enum and our actual methods.
+        // It's a fairly simple system, enum in method out.
+        private static  Dictionary<Packets.Client, Action<Int32, DataBuffer>> Handlers = new Dictionary<Packets.Client, Action<Int32, DataBuffer>>() {
+            { Packets.Client.Login, HandleData.HandleLogin },
+            { Packets.Client.NewAccount, HandleData.HandleNewAccount },
+            { Packets.Client.AddCharacter, HandleData.HandleAddCharacter }
+        };
+
+        public static void Handle(Int32 id, DataBuffer buffer) {
+            // Retrieve our client's packet and pass it on to the appropriate method where possible.
+            var junk = buffer.ReadInt32();       // Accomodates for VB6's length affix
+            var packet = (Packets.Client)buffer.ReadInt32();
+            Handlers.TryGet(packet, (i, b) => { /* Do Nothing! */ })(id, buffer);   
+        }
+
+        public static void ClientConnected(Int32 id) {
+            if (Data.Players.ContainsKey(id)) return;
+
+            // Create ourselves a brand new Player class and assign it to the appropriate ID.
+            var temp = new Player();
+            var tempp = new TempPlayer();
+            Data.Players.Add(id, temp);
+            Data.TempPlayers.Add(id, tempp);
+        }
+
+        public static void ClientDisconnected(Int32 id) {
+            // Save our player data
+            if (Data.Players[id].Username.Length > 0) {
+                Data.SavePlayer(id);
+            }
+
+            // Remove our player from our system!
+            Data.Players.Remove(id);
+            Data.TempPlayers.Remove(id);
+        }
+
+    }
+}
