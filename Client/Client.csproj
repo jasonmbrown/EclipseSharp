@@ -143,9 +143,9 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <ProjectReference Include="..\Extensions\Extensions.csproj">
+    <ProjectReference Include="..\Extensions\Shared Data.csproj">
       <Project>{63a8cb13-4cea-4ee3-aa36-47f1bd158415}</Project>
-      <Name>Extensions</Name>
+      <Name>Shared Data</Name>
     </ProjectReference>
     <ProjectReference Include="..\TGUI\TGUI.csproj">
       <Project>{d17de83d-a592-461f-8af2-53f9e22e1d0f}</Project>

@@ -64,9 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Database\Classes\Class.cs" />
     <Compile Include="Database\Data.cs" />
-    <Compile Include="Database\Classes\Player.cs" />
     <Compile Include="Database\Classes\Settings.cs" />
     <Compile Include="Database\Classes\TempPlayer.cs" />
     <Compile Include="Logic\Input.cs" />
@@ -83,9 +81,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Extensions\Extensions.csproj">
+    <ProjectReference Include="..\Extensions\Shared Data.csproj">
       <Project>{63a8cb13-4cea-4ee3-aa36-47f1bd158415}</Project>
-      <Name>Extensions</Name>
+      <Name>Shared Data</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -40,19 +40,11 @@ namespace Server.Networking {
                     buffer.WriteInt32(Data.Classes[i].GetMaxVital(Enumerations.Vitals.HP));
                     buffer.WriteInt32(Data.Classes[i].GetMaxVital(Enumerations.Vitals.MP));
 
-                    // Male Sprites
-                    buffer.WriteInt32(Data.Classes[i].MaleSprite.Count - 1);    // VB6 yo.
-                    for (var s = 0; s < Data.Classes[i].MaleSprite.Count; s++) {
-                        buffer.WriteInt32(Data.Classes[i].MaleSprite[s]);
-                    }
+                    // Sprites
+                    buffer.WriteInt32(Data.Classes[i].MaleSprite);
+                    buffer.WriteInt32(Data.Classes[i].FemaleSprite);
 
-                    // Female Sprites
-                    buffer.WriteInt32(Data.Classes[i].FemaleSprite.Count - 1);  // VB6 yo.
-                    for (var s = 0; s < Data.Classes[i].FemaleSprite.Count; s++) {
-                        buffer.WriteInt32(Data.Classes[i].FemaleSprite[s]);
-                    }
-
-                     //Stats
+                    //Stats
                     for (var s = 0; s < (Int32)Enumerations.Stats.Stat_Count; s++) {
                         buffer.WriteInt32(Data.Classes[i].Statistic[s]);
                     }

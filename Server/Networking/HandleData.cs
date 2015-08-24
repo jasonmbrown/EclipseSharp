@@ -56,7 +56,6 @@ namespace Server.Networking {
             var name    = buffer.ReadString().Trim();
             var gender  = buffer.ReadInt32();
             var classn  = buffer.ReadInt32();
-            var sprite  = buffer.ReadInt32();
 
             // Make sure the name is at least X characters long.
             if (name.Length < Data.Settings.MinUsernameChar) {
@@ -87,7 +86,7 @@ namespace Server.Networking {
             Data.Players[id].Characters[slot].Name                                    = name;
             Data.Players[id].Characters[slot].Gender                                  = (Byte)gender;
             Data.Players[id].Characters[slot].Class                                   = classn;
-            Data.Players[id].Characters[slot].Sprite                                  = gender == (Int32)Enumerations.Gender.Male ? Data.Classes[classn].MaleSprite[sprite] : Data.Classes[classn].FemaleSprite[sprite];
+            Data.Players[id].Characters[slot].Sprite                                  = gender == (Int32)Enumerations.Gender.Male ? Data.Classes[classn].MaleSprite : Data.Classes[classn].FemaleSprite;
             Data.Players[id].Characters[slot].Level                                   = 1;
             Data.Players[id].Characters[slot].Map                                     = Data.Settings.StartMap;
             Data.Players[id].Characters[slot].X                                       = Data.Settings.StartX;

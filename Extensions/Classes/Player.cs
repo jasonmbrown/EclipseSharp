@@ -11,15 +11,15 @@ namespace Server.Database {
         public  String  Salt            { get; set; }
 
         // General
-        public Character[] Characters = new Character[Data.Settings.MaxCharacters];
+        public Character[] Characters;
         #endregion
 
         #region Constructors
-        public Player() {
+        public Player(Int32 maxcharacters) {
             this.Username       = String.Empty;
             this.Password       = String.Empty;
             this.Salt           = String.Empty;
-
+            this.Characters = new Character[maxcharacters];
         }
         #endregion
 

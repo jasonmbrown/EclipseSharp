@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csproj", "{259CBFC2-5112-4E69-89D6-0337BEC1D32E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions", "Extensions\Extensions.csproj", "{63A8CB13-4CEA-4EE3-AA36-47F1BD158415}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared Data", "Extensions\Shared Data.csproj", "{63A8CB13-4CEA-4EE3-AA36-47F1BD158415}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{C8CBEEE2-8CA7-4B2D-BC40-128E71830E4F}"
 EndProject

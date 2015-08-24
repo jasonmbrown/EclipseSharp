@@ -26,7 +26,7 @@ namespace Server.Networking {
             if (Data.Players.ContainsKey(id)) return;
 
             // Create ourselves a brand new Player class and assign it to the appropriate ID.
-            var temp = new Player();
+            var temp = new Player(Data.Settings.MaxCharacters);
             var tempp = new TempPlayer();
             Data.Players.Add(id, temp);
             Data.TempPlayers.Add(id, tempp);
