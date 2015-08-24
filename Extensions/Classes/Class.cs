@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Extensions;
 
-namespace Server.Database {
+namespace Extensions.Database {
     public class Class {
 
         #region Declares

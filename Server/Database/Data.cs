@@ -1,7 +1,6 @@
 ﻿using System;
-using Extensions;
+using Extensions.Database;
 using System.Collections.Generic;
-using System.Xml.Linq;
 using System.IO;
 using Server.Logic;
 
@@ -66,6 +65,7 @@ namespace Server.Database {
         public static void CheckDirectories() {
             if (!Directory.Exists(Data.AppPath + "data files\\accounts")) Directory.CreateDirectory(Data.AppPath + "data files\\accounts");
             if (!Directory.Exists(Data.AppPath + "data files\\classes")) Directory.CreateDirectory(Data.AppPath + "data files\\classes");
+            if (!Directory.Exists(Data.AppPath + "data files\\sounds")) Directory.CreateDirectory(Data.AppPath + "data files\\sounds");
         }
         public static void SaveClasses() {
             for (var i = 0; i < Data.Settings.MaxClasses; i++) {

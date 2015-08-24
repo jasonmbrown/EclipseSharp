@@ -1,7 +1,7 @@
 ﻿using System;
 using Extensions;
 
-namespace Server.Database {
+namespace Extensions.Database {
     public class Player {
 
         #region Declares

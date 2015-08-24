@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Server.Networking {
+namespace Extensions.Networking {
     public class DataBuffer : IDisposable {
 
         #region Declarations
