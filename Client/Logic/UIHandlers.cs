@@ -107,5 +107,19 @@ namespace Client.Logic {
             Interface.ChangeUI(Interface.Windows.Loading);
             Interface.GUI.Get<Panel>("loadpanel").Get<Label>("loadtext").Text = "Sending account data..";
         }
+
+        internal static void CreateCharacter_CancelClick(object sender, CallbackArgs e) {
+            // Change our UI!
+            Interface.ChangeUI(Interface.Windows.CharacterSelect);
+        }
+
+        internal static void CreateCharacter_CreateClick(object sender, CallbackArgs e) {
+            throw new NotImplementedException();
+        }
+
+        internal static void CharacterSelect_LogoutClick(object sender, CallbackArgs e) {
+            Send.Logout();
+            Interface.ChangeUI(Interface.Windows.MainMenu);
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Extensions.Networking;
 using Client.Rendering;
 using Extensions.Database;
+using Client.Database;
 
 namespace Client.Networking {
     public static class HandleData {
@@ -34,6 +35,7 @@ namespace Client.Networking {
                 c.Name = buffer.ReadString();
                 c.MaleSprite = buffer.ReadInt32();
                 c.FemaleSprite = buffer.ReadInt32();
+                Data.Classes.Add(i, c);
             }
 
             Interface.ChangeUI(Interface.Windows.CharacterCreate);

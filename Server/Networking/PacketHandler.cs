@@ -14,7 +14,8 @@ namespace Server.Networking {
         private static  Dictionary<Packets.Client, Action<Int32, DataBuffer>> Handlers = new Dictionary<Packets.Client, Action<Int32, DataBuffer>>() {
             { Packets.Client.Login, HandleData.HandleLogin },
             { Packets.Client.NewAccount, HandleData.HandleNewAccount },
-            { Packets.Client.AddCharacter, HandleData.HandleAddCharacter }
+            { Packets.Client.AddCharacter, HandleData.HandleAddCharacter },
+            { Packets.Client.Logout, HandleData.HandleLogout }
         };
 
         public static void Handle(Int32 id, DataBuffer buffer) {

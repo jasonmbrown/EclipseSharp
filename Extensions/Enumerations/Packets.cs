@@ -7,7 +7,7 @@ namespace Extensions {
             NewAccount,
             Login,
             AddCharacter,
-            RequestMaxData
+            Logout
         }
 
         public enum Server {

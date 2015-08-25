@@ -72,6 +72,13 @@ namespace Server.Networking {
             }
 
         }
+
+        internal static void HandleLogout(Int32 id, DataBuffer buffer) {
+            Data.SavePlayer(id);
+            Data.Players[id] = new Extensions.Database.Player();
+            Data.TempPlayers[id] = new TempPlayer();
+        }
+
         public static void HandleNewAccount(Int32 id, DataBuffer buffer) {
             // Handles a user's request to register an account.
             var username = buffer.ReadString().Trim();

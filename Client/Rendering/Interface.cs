@@ -297,13 +297,43 @@ namespace Client.Rendering {
             var logout = window.Add(new Button(Theme), "logout");
             logout.Text = "Logout";
             logout.Position = new Vector2f((window.Size.X / 2) - (logout.Size.X / 2), 260);
-            logout.LeftMouseClickedCallback += UIHandlers.MainMenu_LoginClick;
+            logout.LeftMouseClickedCallback += UIHandlers.CharacterSelect_LogoutClick;
 
 
             // Set our current UI!
             CurrentUI = Windows.CharacterSelect;
         }
         private static void CreateCharacterCreate() {
+            var resx = Data.Settings.Graphics.ResolutionX;
+            var resy = Data.Settings.Graphics.ResolutionY;
+
+            var backpic = GUI.Add(new Picture(String.Format("{0}data files\\interface\\background.png", Data.AppPath)), "background");
+            backpic.Size = new Vector2f((float)resx, (float)resy);
+            backpic.Position = new Vector2f(0f, 0f);
+
+            var window = GUI.Add(new Panel(), "window");
+            window.Size = new Vector2f(500, 300);
+            window.Position = new Vector2f((resx / 2) - (window.Size.X / 2), (resy / 2) - (window.Size.Y / 2));
+            window.Transparency = 200;
+
+            var label = window.Add(new Label(Theme), "label1");
+            label.TextColor = Color.Black;
+            label.TextSize = 48;
+            label.Text = "Create Character";
+            label.Position = new Vector2f((window.Size.X / 2) - (label.Size.X / 2), 10);
+
+            var picture = window.Add(new Picture(String.Format("{0}data files\\sprites\\{1}.png", Data.AppPath, Data.Classes[1].MaleSprite)));
+            picture.Position = new Vector2f(5, 30);
+
+            var cancel = window.Add(new Button(Theme), "cancel");
+            cancel.Text = "Cancel";
+            cancel.Position = new Vector2f(5, 260);
+            cancel.LeftMouseClickedCallback += UIHandlers.CreateCharacter_CancelClick;
+
+            var create = window.Add(new Button(Theme), "create");
+            create.Text = "Create";
+            create.Position = new Vector2f(window.Size.X - (create.Size.X + 5), 260);
+            create.LeftMouseClickedCallback += UIHandlers.CreateCharacter_CreateClick;
 
             // Set our current UI!
             CurrentUI = Windows.CharacterCreate;
