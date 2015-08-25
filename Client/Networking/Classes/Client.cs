@@ -1,18 +1,13 @@
 ﻿using Extensions.Networking;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Client.Networking {
     public class Client : IDisposable {
 
         #region Declarations
         private Socket MainSocket;
-        private Int32 BufferSize;
 
         public Action<Boolean> ConnectedHandler;
         public Action<DataBuffer> PacketHandler;
@@ -22,7 +17,6 @@ namespace Client.Networking {
         public Client() {
             var perm = new SocketPermission(NetworkAccess.Accept, TransportType.Tcp, "", SocketPermission.AllPorts);
             perm.Demand();
-            this.BufferSize = 1024;
         }
         public void Dispose() {
             this.MainSocket = null;
@@ -42,7 +36,10 @@ namespace Client.Networking {
             this.MainSocket.BeginConnect(endpoint, new AsyncCallback(Connected), null);
         }
         public void SendData(Byte[] data) {
-            this.MainSocket.BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(DataSent), null);
+            var b = new DataBuffer();
+            b.WriteInt32(data.Length);
+            b.Append(data);
+            this.MainSocket.BeginSend(b.ToArray(), 0, (Int32)b.Length(), SocketFlags.None, new AsyncCallback(DataSent), null);
         }
         #endregion
 
@@ -54,23 +51,34 @@ namespace Client.Networking {
                 this.ConnectedHandler(false);
                 return;
             }
-            var buffer = new Byte[this.BufferSize];
-            this.MainSocket.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), buffer);
+            var state = new StateObject();
+            this.MainSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
             this.ConnectedHandler(true);
         }
         private void ReceiveData(IAsyncResult ar) {
-            var buf = (Byte[])ar.AsyncState;
+            var state = (StateObject)ar.AsyncState;
+            var receive = 0;
+
             try {
-                var receive = this.MainSocket.EndReceive(ar);
-                using (var buffer = new DataBuffer()) {
-                    if (receive > 0) {
-                        buffer.FromArray(buf);
-                        this.PacketHandler(buffer);
-                        buf = new Byte[this.BufferSize];
-                        this.MainSocket.BeginReceive(buf, 0, this.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), buf);
-                    }
-                }
+                receive = this.MainSocket.EndReceive(ar);
             } catch (SocketException) { }
+
+            if (receive > 0) {
+                state.Data.Append(state.Buffer);
+                state.Received += receive;
+
+                var temp = new DataBuffer();
+                temp.FromArray(state.Data.ToArray());
+                var alength = temp.ReadInt32();
+                if (alength == (state.Received - 4)) {
+                    this.PacketHandler(temp);
+                    var newstate = new StateObject();
+                    this.MainSocket.BeginReceive(newstate.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), newstate);
+                } else {
+                    this.MainSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
+                }
+
+            }
         }
         private void DataSent(IAsyncResult ar) {
             this.MainSocket.EndSend(ar);

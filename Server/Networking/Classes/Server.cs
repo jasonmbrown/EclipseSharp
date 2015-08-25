@@ -5,9 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Extensions.Networking;
-using Server.Logic;
 
-namespace Server.Networking {
+namespace Server.Networking { 
     class Server : IDisposable {
 
         #region Declarations
@@ -15,8 +14,6 @@ namespace Server.Networking {
         private Dictionary<Int32, Socket> Clients = new Dictionary<Int32, Socket>();
         private Int32 MaxClients;
         private Timer ConnectionCheck;
-
-        public Int32 BufferSize { get; set; }
 
         public Action<Int32, DataBuffer> PacketHandler { get; set; }
         public Action<Int32> ConnectHandler { get; set; }
@@ -29,8 +26,6 @@ namespace Server.Networking {
             IPAddress ip; IPAddress.TryParse("0.0.0.0", out ip);
             var endpoint = new IPEndPoint(ip, port);
             perm.Demand();
-
-            this.BufferSize = 1024;
 
             this.MaxClients = maxclients;
             this.MainSocket = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -88,7 +83,10 @@ namespace Server.Networking {
         }
         public void SendDataTo(Int32 id, Byte[] data) {
             try {
-                Clients[id].BeginSend(data, 0, data.Length, SocketFlags.None, new AsyncCallback(DataSent), Clients[id]);
+                var b = new DataBuffer();
+                b.WriteInt32(data.Length);
+                b.Append(data);
+                Clients[id].BeginSend(b.ToArray(), 0, (Int32)b.Length(), SocketFlags.None, new AsyncCallback(DataSent), Clients[id]);
             } catch (SocketException) { }
         }
         public void SendDataToAll(Byte[] data) {
@@ -101,7 +99,6 @@ namespace Server.Networking {
         #region Events
         private void AcceptConnection(IAsyncResult ar) {
             var socket = (Socket)ar.AsyncState;
-            var buffer = new Byte[this.BufferSize];
             var id = FindNewId();
 
             if (id == 0) throw new NotImplementedException();
@@ -112,38 +109,49 @@ namespace Server.Networking {
 
             this.ConnectHandler(id);
 
-            var obj = new Object[3]; obj[0] = buffer; obj[1] = client; obj[2] = id;
+            var state = new StateObject();
+            state.Id = id;
+            state.Connection = client;
+            state.Data = new DataBuffer();
             client.LingerState = new LingerOption(true, 0);
-            client.BeginReceive(buffer, 0, buffer.Length, SocketFlags.None, new AsyncCallback(ReceiveData), obj);
+            client.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
             socket.BeginAccept(new AsyncCallback(AcceptConnection), MainSocket);
         }
         private void ReceiveData(IAsyncResult ar) {
-            object[] obj = new object[3]; obj = (object[])ar.AsyncState;
-            var buf = (Byte[])obj[0];
-            var sock = (Socket)obj[1];
-            var id = (Int32)obj[2];
+            var state = (StateObject)ar.AsyncState;
 
-            if (!Clients.ContainsKey(id)) return;
+            if (!Clients.ContainsKey(state.Id)) return;
 
             Int32 receive = 0;
             try {
-                receive = sock.EndReceive(ar);
+                receive = state.Connection.EndReceive(ar);
             } catch { }
-            using (var buffer = new DataBuffer()) {
-                if (receive > 0) {
-                    buffer.FromArray(buf);
-                    this.PacketHandler(id, buffer);
-                    buf = new Byte[this.BufferSize];
-                    obj[0] = buf; obj[1] = sock; obj[2] = id;
-                    sock.BeginReceive(buf, 0, this.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), obj);
+
+            if (receive > 0) {
+                state.Data.Append(state.Buffer);
+                state.Received += receive;
+                var temp = new DataBuffer();
+                temp.FromArray(state.Data.ToArray());
+                var alength = temp.ReadInt32(); ;
+                if (alength == (state.Received - 4)) {
+                    this.PacketHandler(state.Id, temp);
+                    var newstate = new StateObject();
+                    newstate.Id = state.Id;
+                    newstate.Connection = state.Connection;
+                    newstate.Data = new DataBuffer();
+                    newstate.Connection.BeginReceive(newstate.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), newstate);
+                } else {
+                    state.Connection.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
                 }
             }
         }
         private void CheckConnections(Object e) {
             var list = new List<Int32>();
 
-            SendDataToAll(new Byte[0]);
             foreach (var client in Clients) {
+                try {
+                    client.Value.BeginSend(new Byte[0], 0, 0, SocketFlags.None, new AsyncCallback(DataSent), client.Value);
+                } catch { }
                 if (((!client.Value.Poll(1, SelectMode.SelectWrite) && client.Value.Available == 0) || !client.Value.Connected)) {
                     list.Add(client.Key);
                 }

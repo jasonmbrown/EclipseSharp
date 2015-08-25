@@ -30,8 +30,11 @@ namespace Extensions.Networking {
             this.Stream.Write(value, 0, value.Length);
             this.ResetPosition();
         }
+        public void Append(Byte[] value) {
+            this.Stream.Write(value, 0, value.Length);
+        }
         public Int64 Length() {
-            return this.Stream.Position;
+            return this.Stream.ToArray().Length;
         }
         #endregion
 
