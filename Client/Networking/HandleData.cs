@@ -19,6 +19,12 @@ namespace Client.Networking {
             Interface.GUI.Get<TGUI.Panel>("loadpanel").Get<TGUI.Label>("loadtext").Text = "Receiving Data...";
         }
 
+        internal static void HandleErrorMessage(DataBuffer buffer) {
+            var message = buffer.ReadString();
+            Interface.ShowMessagebox("Error", message);
+            Program.NetworkClient.Close();
+        }
+
         internal static void HandleCreateCharacterData(DataBuffer buffer) {
             // get amount of classes.
             var classes = buffer.ReadInt32();

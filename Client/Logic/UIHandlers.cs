@@ -47,7 +47,7 @@ namespace Client.Logic {
         }
 
         public static void RegisterMenu_CancelClick(object sender, CallbackArgs e) {
-            // Change our UI over to the Registration interface.
+            // Change our UI over to the Main interface.
             Interface.ChangeUI(Interface.Windows.MainMenu);
         }
 
@@ -64,6 +64,12 @@ namespace Client.Logic {
                     Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("password").Text = (String)Interface.LastData[1];
                     Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("password2").Text = (String)Interface.LastData[2];
                     break;
+
+                    case Interface.Windows.Login:
+                    Interface.ChangeUI(Interface.Windows.Login);
+                    Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("username").Text = (String)Interface.LastData[0];
+                    Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("password").Text = (String)Interface.LastData[1];
+                    break;
                 }
             }
         }
@@ -71,6 +77,35 @@ namespace Client.Logic {
         internal static void Alertbox_OKClick(object sender, CallbackArgs e) {
             // Close our screen, and thus our program!
             Graphics.CloseScreen();
+        }
+
+        internal static void LoginMenu_CancelClick(object sender, CallbackArgs e) {
+            // Change our UI over to the Main interface.
+            Interface.ChangeUI(Interface.Windows.MainMenu);
+        }
+
+        internal static void LoginMenu_LoginClick(object sender, CallbackArgs e) {
+            // Retrieve our data from the UI.
+            var username = Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("username").Text;
+            var password = Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("password").Text;
+
+            // Perform some preliminary checks.
+            if (username.Length < 1 || password.Length < 1) {
+                Interface.ShowMessagebox("Error", "Please fill in every field.");
+                return;
+            }
+
+            // We've passed the client-side checks! On to the server we go!
+            Send.Login(username, password);
+
+            // Set our screen to the loading screen since we are awaiting a response.
+            // Make sure we store some data so we can come back to this.
+            Interface.LastWindow = Interface.Windows.Login;
+            Interface.LastData.Clear();
+            Interface.LastData.Add(username);
+            Interface.LastData.Add(password);
+            Interface.ChangeUI(Interface.Windows.Loading);
+            Interface.GUI.Get<Panel>("loadpanel").Get<Label>("loadtext").Text = "Sending account data..";
         }
     }
 }

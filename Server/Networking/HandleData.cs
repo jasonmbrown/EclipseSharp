@@ -10,8 +10,67 @@ namespace Server.Networking {
     static class HandleData {
 
         public static void HandleLogin(Int32 id, DataBuffer buffer) {
-            // TODO
-            throw new NotImplementedException();
+            // Handles a user's request to login.
+            var username = buffer.ReadString().Trim();
+            var password = buffer.ReadString().Trim();
+
+            // Check if the user isn't sending too long/short data.
+            if (username.Trim().Length < Data.Settings.MinUsernameChar || username.Trim().Length > Data.Settings.MaxUsernameChar || password.Trim().Length < Data.Settings.MinPasswordChar || password.Trim().Length > Data.Settings.MaxPasswordChar) {
+                Send.AlertMessage(id, String.Format("Your username must be between {0} and {1} characters long. Your password must be between {2} and {3} characters long.", Data.Settings.MinUsernameChar, Data.Settings.MaxUsernameChar, Data.Settings.MinPasswordChar, Data.Settings.MaxPasswordChar));
+                return;
+            }
+
+            // Check if this account exists.
+            if (!File.Exists(String.Format("{0}data files\\accounts\\{1}.xml", Data.AppPath, username.ToLower()))) {
+                Send.AlertMessage(id, "Invalid Username/Password!");
+                return;
+            }
+
+            // Load our player!
+            Data.LoadPlayer(id, username.ToLower());
+
+            // Compare their passwords!
+            if (!Data.Players[id].ComparePassword(password)) {
+                Send.AlertMessage(id, "Invalid Username/Password!");
+                Data.Players[id] = new Extensions.Database.Player();
+                return;
+            }
+
+            // Send our OK.
+            Logger.Write(String.Format("ID: {0} has logged in.", id));
+            Send.LoginOK(id);
+
+            // Disconnect anyone else logged into this account.
+            var oldclient = 0;
+            for (var i = 0; i < Data.Settings.MaxPlayers; i++) {        // We can't foreach on the player dictionary, the list is prone to change.
+                if (Data.Players.ContainsKey(i)) {
+                    if (Data.Players[i].Username.ToLower().Equals(username.ToLower()) && i != id) {
+                        oldclient = i;
+                    }
+                }
+            }
+            if (oldclient != 0) {
+                Send.AlertMessage(oldclient, "Someone else has logged onto your account!");
+                Data.SavePlayer(oldclient);
+                // NOTE: the user is still logged on until they get this message, we're saving their data on purpose.
+                // Their data will now be saved twice, but we can safely load it.
+                Data.LoadPlayer(id, username.ToLower());
+            }
+
+            // Check if they have at least one character.
+            var haschars = false;
+            foreach(var chr in Data.Players[id].Characters) {
+                if (chr.Name.Length > 0) haschars = true;
+            }
+
+            // If we have characters, show character select.
+            // Otherwise force the user to make a new character.
+            if (haschars) {
+                // TODO
+            } else {
+                Send.NewCharacterData(id);
+            }
+
         }
         public static void HandleNewAccount(Int32 id, DataBuffer buffer) {
             // Handles a user's request to register an account.
@@ -32,7 +91,7 @@ namespace Server.Networking {
             }
 
             // Check if this account already exists.
-            if (File.Exists(String.Format("{0}data files\\accounts\\{1}.xml", Data.AppPath, username))) {
+            if (File.Exists(String.Format("{0}data files\\accounts\\{1}.xml", Data.AppPath, username.ToLower()))) {
                 Send.AlertMessage(id, "Sorry, that account name is already taken!");
                 return;
             }

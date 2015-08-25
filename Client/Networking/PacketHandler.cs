@@ -11,8 +11,9 @@ namespace Client.Networking {
         // It's a fairly simple system, enum in method out.
         private static Dictionary<Packets.Server, Action<DataBuffer>> Handlers = new Dictionary<Packets.Server, Action<DataBuffer>>() {
             { Packets.Server.AlertMsg,              HandleData.HandleAlertMessage },
+            { Packets.Server.ErrorMsg,              HandleData.HandleErrorMessage },
             { Packets.Server.LoginOk,               HandleData.HandleLoginOk },
-            {Packets.Server.NewCharacterData,       HandleData.HandleCreateCharacterData }
+            { Packets.Server.NewCharacterData,       HandleData.HandleCreateCharacterData }
         };
 
         public static void Handle(DataBuffer buffer) {

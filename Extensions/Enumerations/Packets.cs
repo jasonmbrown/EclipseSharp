@@ -11,7 +11,8 @@ namespace Extensions {
         }
 
         public enum Server {
-            AlertMsg = 1,
+            AlertMsg,
+            ErrorMsg,
             LoginOk,
             NewCharacterData
         }

@@ -30,9 +30,10 @@ namespace Client.Rendering {
         private static  Dictionary<Windows, Action>    Interfaces = new Dictionary<Windows, Action>() {
             { Windows.Loading,          CreateLoadMenu },
             { Windows.MainMenu,         CreateMainMenu },
+            { Windows.Login,            CreateLoginMenu },
             { Windows.Register,         CreateRegisterMenu },
             { Windows.CharacterSelect,  CreateCharacterSelect },
-            { Windows.CharacterCreate, CreateCharacterCreate }
+            { Windows.CharacterCreate,  CreateCharacterCreate }
         };
         #endregion
 
@@ -58,7 +59,10 @@ namespace Client.Rendering {
         }
         public static void Draw() {
             // Draw the UI!
-            if (CurrentUI != Windows.None) GUI.Draw();
+            // This can go wrong since we can wreck the internal arrays, threading ahoy!
+            try {
+                if (CurrentUI != Windows.None) GUI.Draw();
+            } catch { }
         }
         public static void Destroy() {
             ClearGUI();
@@ -218,6 +222,58 @@ namespace Client.Rendering {
             register.LeftMouseClickedCallback += UIHandlers.RegisterMenu_RegisterClick;
 
             CurrentUI = Windows.Register;
+        }
+        private static void CreateLoginMenu() {
+            var resx = Data.Settings.Graphics.ResolutionX;
+            var resy = Data.Settings.Graphics.ResolutionY;
+
+            var backpic = GUI.Add(new Picture(String.Format("{0}data files\\interface\\background.png", Data.AppPath)), "background");
+            backpic.Size = new Vector2f((float)resx, (float)resy);
+            backpic.Position = new Vector2f(0f, 0f);
+
+            var window = GUI.Add(new Panel(), "mainmenu");
+            window.Size = new Vector2f(300, 300);
+            window.Position = new Vector2f((resx / 2) - (window.Size.X / 2), (resy / 2) - (window.Size.Y / 2));
+            window.Transparency = 200;
+
+            var title = window.Add(new Label(Theme), "title");
+            title.TextColor = Color.Black;
+            title.TextSize = 60;
+            title.Text = "Login";
+            title.Position = new Vector2f((window.Size.X / 2) - (title.Size.X / 2), 10);
+
+            var label1 = window.Add(new Label(Theme));
+            label1.Text = "Username:";
+            label1.TextColor = Color.Black;
+            label1.TextSize = 14;
+            label1.Position = new Vector2f(10, 100);
+
+            var username = window.Add(new EditBox(Theme), "username");
+            username.Size = new Vector2f(280, 20);
+            username.Position = new Vector2f(10, 115);
+
+            var label2 = window.Add(new Label(Theme));
+            label2.Text = "Password:";
+            label2.TextColor = Color.Black;
+            label2.TextSize = 14;
+            label2.Position = new Vector2f(10, 140);
+
+            var password = window.Add(new EditBox(Theme), "password");
+            password.Size = new Vector2f(280, 20);
+            password.Position = new Vector2f(10, 155);
+            password.PasswordCharacter = "*";
+
+            var cancel = window.Add(new Button(Theme), "cancel");
+            cancel.Text = "cancel";
+            cancel.Position = new Vector2f(5, 260);
+            cancel.LeftMouseClickedCallback += UIHandlers.LoginMenu_CancelClick;
+
+            var register = window.Add(new Button(Theme), "login");
+            register.Text = "login";
+            register.Position = new Vector2f(window.Size.X - (5 + register.Size.X), 260);
+            register.LeftMouseClickedCallback += UIHandlers.LoginMenu_LoginClick;
+
+            CurrentUI = Windows.Login;
         }
         private static void CreateCharacterSelect() {
             var resx = Data.Settings.Graphics.ResolutionX;

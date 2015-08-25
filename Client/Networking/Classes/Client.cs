@@ -35,6 +35,10 @@ namespace Client.Networking {
             this.MainSocket.NoDelay = false;
             this.MainSocket.BeginConnect(endpoint, new AsyncCallback(Connected), null);
         }
+        public void Close() {
+            this.MainSocket.Disconnect(false);
+            this.MainSocket.Close();
+        }
         public void SendData(Byte[] data) {
             var b = new DataBuffer();
             b.WriteInt32(data.Length);
@@ -71,9 +75,9 @@ namespace Client.Networking {
                 temp.FromArray(state.Data.ToArray());
                 var alength = temp.ReadInt32();
                 if (alength == (state.Received - 4)) {
-                    this.PacketHandler(temp);
                     var newstate = new StateObject();
                     this.MainSocket.BeginReceive(newstate.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), newstate);
+                    this.PacketHandler(temp);
                 } else {
                     this.MainSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
                 }

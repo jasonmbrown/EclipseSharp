@@ -24,6 +24,14 @@ namespace Server.Networking {
                 SendDataTo(id, buffer);
             }
         }
+        public static void ErrorMessage(Int32 id, String message) {
+            // Write our alert into a buffer and send it along.
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.ErrorMsg);
+                buffer.WriteString(message);
+                SendDataTo(id, buffer);
+            }
+        }
         public static void NewCharacterData(Int32 id) {
             // Write our classlist and send it.
             using (var buffer = new DataBuffer()) {

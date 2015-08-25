@@ -11,7 +11,7 @@ namespace Extensions.Database {
         public  String  Salt            { get; set; }
 
         // General
-        public Character[] Characters;
+        public Character[] Characters { get; set; }
         #endregion
 
         #region Constructors
@@ -19,7 +19,10 @@ namespace Extensions.Database {
             this.Username       = String.Empty;
             this.Password       = String.Empty;
             this.Salt           = String.Empty;
-            this.Characters = new Character[3];
+            this.Characters     = new Character[3];
+            for (var i = 0; i < this.Characters.Length; i++) {
+                this.Characters[i] = new Character();
+            }
         }
         #endregion
 

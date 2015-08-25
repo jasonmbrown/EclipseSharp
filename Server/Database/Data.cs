@@ -111,7 +111,7 @@ namespace Server.Database {
             }
         }
         public static void SavePlayer(Int32 id) {
-            var filename = String.Format("{0}data files\\accounts\\{1}.xml", Data.AppPath, Data.Players[id].Username);
+            var filename = String.Format("{0}data files\\accounts\\{1}.xml", Data.AppPath, Data.Players[id].Username.ToLower());
 
             // Make sure we don't try to save a non-existant player.
             if (!Data.Players.ContainsKey(id)) return;
@@ -120,15 +120,16 @@ namespace Server.Database {
             if (File.Exists(filename)) File.Delete(filename);
 
             // Serialize our object and throw it to a file!
-            var ser = new System.Xml.Serialization.XmlSerializer(Data.Players[id].GetType());
+            var ser = new System.Xml.Serialization.XmlSerializer(new Player().GetType());
             using (var fs = File.OpenWrite(filename)) {
                 ser.Serialize(fs, Data.Players[id]);
             }
         }
         public static void LoadPlayer(Int32 id, String name) {
+            var filename = String.Format("{0}data files\\accounts\\{1}.xml", Data.AppPath, Data.Players[id].Username.ToLower());
 
             // load our data.
-            var ser = new System.Xml.Serialization.XmlSerializer(Data.Classes[id].GetType());
+            var ser = new System.Xml.Serialization.XmlSerializer(new Player().GetType());
             using (var fs = File.OpenRead(String.Format("{0}data files\\accounts\\{1}.xml", Data.AppPath, name))) {
                 Data.Players[id] = (Player)ser.Deserialize(fs);
             }
