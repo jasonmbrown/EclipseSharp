@@ -24,31 +24,24 @@ namespace Server.Networking {
                 SendDataTo(id, buffer);
             }
         }
-        public static void NewCharacterClasses(Int32 id) {
+        public static void NewCharacterData(Int32 id) {
             // Write our classlist and send it.
             using (var buffer = new DataBuffer()) {
-                buffer.WriteInt32((Int32)Packets.Server.CreateCharacterData);
+                buffer.WriteInt32((Int32)Packets.Server.NewCharacterData);
 
                 // Write our class count.
                 buffer.WriteInt32(Data.Settings.MaxClasses);
 
                 // We're going to have to write data for each class.
                 for (var i = 1; i <= Data.Settings.MaxClasses; i++) {
+
                     // Name
                     buffer.WriteString(Data.Classes[i].Name);
-
-                    // Vitals
-                    buffer.WriteInt32(Data.Classes[i].GetMaxVital(Enumerations.Vitals.HP));
-                    buffer.WriteInt32(Data.Classes[i].GetMaxVital(Enumerations.Vitals.MP));
 
                     // Sprites
                     buffer.WriteInt32(Data.Classes[i].MaleSprite);
                     buffer.WriteInt32(Data.Classes[i].FemaleSprite);
 
-                    //Stats
-                    for (var s = 0; s < (Int32)Enumerations.Stats.Stat_Count; s++) {
-                        buffer.WriteInt32(Data.Classes[i].Statistic[s]);
-                    }
                 }
                 // Send our data!
                 SendDataTo(id, buffer);

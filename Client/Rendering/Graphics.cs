@@ -2,6 +2,8 @@
 using SFML.Window;
 using SFML.Graphics;
 using System.Collections.Generic;
+using System.IO;
+using Client.Database;
 
 namespace Client.Rendering {
     static class Graphics {
@@ -9,7 +11,8 @@ namespace Client.Rendering {
         #region Declarations
         private static RenderWindow Screen;
 
-        private static Dictionary<String, Texture> Tileset = new Dictionary<String, Texture>();
+        private static Dictionary<Int32, TexData> Tileset   = new Dictionary<Int32, TexData>();
+        private static Dictionary<Int32, TexData> Sprite    = new Dictionary<Int32, TexData>();
         #endregion
 
         #region Methods
@@ -34,6 +37,12 @@ namespace Client.Rendering {
             // Initialize the UI.
             Interface.InitGUI(Screen);
             Interface.ChangeUI(Interface.Windows.Loading);
+            Graphics.RenderScreenOnce();
+
+            // Initialize our Graphics.
+            Interface.GUI.Get<TGUI.Panel>("loadpanel").Get<TGUI.Label>("loadtext").Text = "Initializing Graphics...";
+            Graphics.RenderScreenOnce();
+            Graphics.InitSprites();
 
             // Done loading! Start the real menu.
             Interface.ChangeUI(Interface.Windows.MainMenu);
@@ -57,6 +66,17 @@ namespace Client.Rendering {
                 Screen.Display();
             }
         }
+        private static void RenderScreenOnce() {
+            // Clear the screen of all data.
+            Screen.Clear(Color.Green);
+
+            // Render the UI on top of everything!
+            Interface.Draw();
+
+            // Handle all screen events and render changes.
+            Screen.DispatchEvents();
+            Screen.Display();
+        }
         private static void WindowMouseMoved(object sender, MouseMoveEventArgs e) {
             
         }
@@ -78,7 +98,54 @@ namespace Client.Rendering {
         public static void UpdateWindow() {
             Screen.DispatchEvents();
         }
+        private static void InitSprites() {
+            var id = 0;
+            var done = false;
+            while (!done) {
+                id++;
+                if (File.Exists(String.Format("{0}data files\\sprites\\{1}.png", Data.AppPath, id))) {
+                    var texdata = new TexData();
+                    texdata.File = String.Format("{0}data files\\sprites\\{1}.png", Data.AppPath, id);
+                    Graphics.Sprite.Add(id, texdata);
+                } else {
+                    done = true;
+                }
+            }
+        }
+        private static Boolean LoadSprite(Int32 id) {
+            // make sure it exists.
+            if (!Graphics.Sprite.ContainsKey(id)) return false;
+            if (Sprite[id].Data != null) {
+                Sprite[id].LastUse = DateTime.UtcNow;
+                return true;
+            } else {
+                using (var fs = File.OpenRead(Sprite[id].File)) {
+                    Sprite[id].Data = new Texture(fs);
+                    Sprite[id].LastUse = DateTime.UtcNow;
+                    return true;
+                }
+            }
+        }
+        public static Texture GetSprite(Int32 id) {
+            if (!Graphics.Sprite.ContainsKey(id)) return null;
+            Graphics.LoadSprite(id);
+            return Graphics.Sprite[id].Data;
+        }
+        #endregion
+    }
+    class TexData {
+        #region Declarations
+        public String File         { get; set; }
+        public DateTime LastUse    { get; set; }
+        public Texture Data        { get; set; }
+        #endregion
 
+        #region Constructors
+        public TexData() {
+            this.File       = String.Empty;
+            this.LastUse    = DateTime.MinValue;
+            this.Data       = null;
+        }
         #endregion
     }
 }

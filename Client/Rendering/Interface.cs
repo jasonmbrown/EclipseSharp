@@ -17,7 +17,9 @@ namespace Client.Rendering {
             Loading,
             MainMenu,
             Login,
-            Register
+            Register,
+            CharacterSelect,
+            CharacterCreate
         }
 
         public static   Gui                                                   GUI;
@@ -26,9 +28,11 @@ namespace Client.Rendering {
         private static  Windows                                               CurrentUI;
         private static  String                                                Theme;
         private static  Dictionary<Windows, Action>    Interfaces = new Dictionary<Windows, Action>() {
-            { Windows.Loading,  CreateLoadMenu },
-            { Windows.MainMenu, CreateMainMenu },
-            { Windows.Register, CreateRegisterMenu }
+            { Windows.Loading,          CreateLoadMenu },
+            { Windows.MainMenu,         CreateMainMenu },
+            { Windows.Register,         CreateRegisterMenu },
+            { Windows.CharacterSelect,  CreateCharacterSelect },
+            { Windows.CharacterCreate, CreateCharacterCreate }
         };
         #endregion
 
@@ -214,6 +218,39 @@ namespace Client.Rendering {
             register.LeftMouseClickedCallback += UIHandlers.RegisterMenu_RegisterClick;
 
             CurrentUI = Windows.Register;
+        }
+        private static void CreateCharacterSelect() {
+            var resx = Data.Settings.Graphics.ResolutionX;
+            var resy = Data.Settings.Graphics.ResolutionY;
+
+            var backpic = GUI.Add(new Picture(String.Format("{0}data files\\interface\\background.png", Data.AppPath)), "background");
+            backpic.Size = new Vector2f((float)resx, (float)resy);
+            backpic.Position = new Vector2f(0f, 0f);
+
+            var window = GUI.Add(new Panel(), "register");
+            window.Size = new Vector2f(500, 300);
+            window.Position = new Vector2f((resx / 2) - (window.Size.X / 2), (resy / 2) - (window.Size.Y / 2));
+            window.Transparency = 200;
+
+            var label = window.Add(new Label(Theme), "labelselect");
+            label.TextColor = Color.Black;
+            label.TextSize = 60;
+            label.Text = "Select Character";
+            label.Position = new Vector2f((window.Size.X / 2) - (label.Size.X / 2), 10);
+
+            var logout = window.Add(new Button(Theme), "logout");
+            logout.Text = "Logout";
+            logout.Position = new Vector2f((window.Size.X / 2) - (logout.Size.X / 2), 260);
+            logout.LeftMouseClickedCallback += UIHandlers.MainMenu_LoginClick;
+
+
+            // Set our current UI!
+            CurrentUI = Windows.CharacterSelect;
+        }
+        private static void CreateCharacterCreate() {
+
+            // Set our current UI!
+            CurrentUI = Windows.CharacterCreate;
         }
         #endregion
     }

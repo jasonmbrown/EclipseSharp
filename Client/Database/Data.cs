@@ -1,17 +1,21 @@
-﻿using System;
+﻿using Extensions.Database;
+using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Client.Database {
 
     public static class Data {
         #region Declarations
-        public static Settings  Settings = new Settings();
+        public static Dictionary<Int32, Class> Classes  = new Dictionary<Int32, Class>();
+        public static Settings  Settings                = new Settings();
         public static String    AppPath;
         #endregion
 
         #region Methods
         public static void CheckDirectories() {
             if (!Directory.Exists(Data.AppPath + "data files\\tilesets")) Directory.CreateDirectory(Data.AppPath + "data files\\tilesets");
+            if (!Directory.Exists(Data.AppPath + "data files\\sprites")) Directory.CreateDirectory(Data.AppPath + "data files\\sprites");
             if (!Directory.Exists(Data.AppPath + "data files\\interface")) Directory.CreateDirectory(Data.AppPath + "data files\\interface");
             if (!Directory.Exists(Data.AppPath + "data files\\sounds")) Directory.CreateDirectory(Data.AppPath + "data files\\sounds");
         }

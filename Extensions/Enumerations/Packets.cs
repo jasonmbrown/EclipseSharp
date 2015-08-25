@@ -13,7 +13,7 @@ namespace Extensions {
         public enum Server {
             AlertMsg = 1,
             LoginOk,
-            CreateCharacterData
+            NewCharacterData
         }
 
     }

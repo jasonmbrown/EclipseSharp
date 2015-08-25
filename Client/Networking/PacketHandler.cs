@@ -10,7 +10,9 @@ namespace Client.Networking {
         // Set up our dictionary that'll contain the link between our enum and our actual methods.
         // It's a fairly simple system, enum in method out.
         private static Dictionary<Packets.Server, Action<DataBuffer>> Handlers = new Dictionary<Packets.Server, Action<DataBuffer>>() {
-            { Packets.Server.AlertMsg, HandleData.HandleAlertMessage }
+            { Packets.Server.AlertMsg,              HandleData.HandleAlertMessage },
+            { Packets.Server.LoginOk,               HandleData.HandleLoginOk },
+            {Packets.Server.NewCharacterData,       HandleData.HandleCreateCharacterData }
         };
 
         public static void Handle(DataBuffer buffer) {

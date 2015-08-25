@@ -45,8 +45,11 @@ namespace Server.Networking {
             Data.SavePlayer(id);
             Logger.Write(String.Format("ID: {0} has created a new account.", id));
 
+            // Send them our OK!
+            Send.LoginOK(id);
+
             // Send our player the data required to create a new character!
-            Send.NewCharacterClasses(id);
+            Send.NewCharacterData(id);
         }
         public static void HandleAddCharacter(Int32 id, DataBuffer buffer) {
             var legal   = new Regex("^[a-zA-Z0-9]*$");
