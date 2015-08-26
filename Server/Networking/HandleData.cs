@@ -119,10 +119,12 @@ namespace Server.Networking {
         }
         public static void HandleAddCharacter(Int32 id, DataBuffer buffer) {
             var legal   = new Regex("^[a-zA-Z0-9]*$");
-            var slot    = buffer.ReadByte();
             var name    = buffer.ReadString().Trim();
-            var gender  = buffer.ReadInt32();
             var classn  = buffer.ReadInt32();
+            var gender = buffer.ReadByte();
+
+            // Make sure this player exists.
+            if (!Data.Players.ContainsKey(id)) return;
 
             // Make sure the name is at least X characters long.
             if (name.Length < Data.Settings.MinUsernameChar) {
@@ -142,8 +144,18 @@ namespace Server.Networking {
                 return;
             }
 
-            // Make sure this player exists.
-            if (!Data.Players.ContainsKey(id)) return;
+            // Check if there's a slot left to use!
+            var slot = -1;
+            for (var i = 0; slot < Data.Players[id].Characters.Length; i++) {
+                if (Data.Players[id].Characters[i].Name.Length < 1) {
+                    slot = i;
+                    break;
+                }
+            }
+            if (slot < 0) {
+                Send.AlertMessage(id, "Unable to create character.");
+                return;
+            }
 
             // We've come this far, we can add this character!
             Data.Characters.Add(name);
@@ -165,10 +177,10 @@ namespace Server.Networking {
             Data.SavePlayer(id);
 
             // Notify our user!
-            Logger.Write(String.Format("ID: {0} has created character '{1}'.", id, name));
-            HandleData.HandleUseCharacter(id);
+            Logger.Write(String.Format("ID: {0} has created a character.", id));
+            HandleData.HandleUseCharacter(id, slot);
         }
-        public static void HandleUseCharacter(Int32 id) {
+        public static void HandleUseCharacter(Int32 id, Int32 slot) {
             // Make sure the user exists.
             if (!Data.Players.ContainsKey(id)) return;
 
@@ -181,7 +193,7 @@ namespace Server.Networking {
                 // Send our client our game data!
 
                 // Notify the Console.
-                Logger.Write(String.Format("ID: {0} has logged on.", id));
+                Logger.Write(String.Format("ID: {0} has entered the world.", id));
             }
         }
 

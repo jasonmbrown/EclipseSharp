@@ -2,6 +2,7 @@
 using Client.Rendering;
 using TGUI;
 using Client.Networking;
+using Extensions;
 
 namespace Client.Logic {
     public static class UIHandlers {
@@ -70,6 +71,19 @@ namespace Client.Logic {
                     Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("username").Text = (String)Interface.LastData[0];
                     Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("password").Text = (String)Interface.LastData[1];
                     break;
+
+                    case Interface.Windows.CharacterCreate:
+                    Interface.ChangeUI(Interface.Windows.CharacterCreate);
+                    Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.EditBox>("name").Text = (String)Interface.LastData[0];
+                    Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.ComboBox>("class").SetSelectedItem((Int32)Interface.LastData[1] - 1);
+                    if ((Enumerations.Gender)Interface.LastData[2] == Enumerations.Gender.Male) {
+                        Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.Checkbox>("male").Check();
+                        Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.Checkbox>("female").Uncheck();
+                    } else {
+                        Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.Checkbox>("female").Check();
+                        Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.Checkbox>("male").Uncheck();
+                    }
+                    break;
                 }
             }
         }
@@ -114,12 +128,45 @@ namespace Client.Logic {
         }
 
         internal static void CreateCharacter_CreateClick(object sender, CallbackArgs e) {
-            throw new NotImplementedException();
+            var name = Interface.GUI.Get<Panel>("window").Get<EditBox>("name").Text;
+            var pclass = Interface.GUI.Get<Panel>("window").Get<ComboBox>("class").GetSelectedItemIndex() + 1;
+            var male = Interface.GUI.Get<Panel>("window").Get<Checkbox>("male").IsChecked();
+            var female = Interface.GUI.Get<Panel>("window").Get<Checkbox>("female").IsChecked();
+            var gender = male ? Enumerations.Gender.Male : Enumerations.Gender.Female;
+            
+            // Check some stuff.
+            if (name.Length < 1) {
+                Interface.ShowMessagebox("Error", "Please fill in every field.");
+                return;
+            }
+
+            // Send our request.
+            Send.AddCharacter(name, pclass, gender);
+
+            // Set our screen to the loading screen since we are awaiting a response.
+            // Make sure we store some data so we can come back to this.
+            Interface.LastWindow = Interface.Windows.CharacterCreate;
+            Interface.LastData.Clear();
+            Interface.LastData.Add(name);
+            Interface.LastData.Add(pclass);
+            Interface.LastData.Add(gender);
+            Interface.ChangeUI(Interface.Windows.Loading);
+            Interface.GUI.Get<Panel>("loadpanel").Get<Label>("loadtext").Text = "Sending character data..";
         }
 
         internal static void CharacterSelect_LogoutClick(object sender, CallbackArgs e) {
             Send.Logout();
             Interface.ChangeUI(Interface.Windows.MainMenu);
+        }
+
+        internal static void CreateCharacter_MaleClick(object sender, CallbackArgs e) {
+            Interface.GUI.Get<Panel>("window").Get<Checkbox>("male").Check();
+            Interface.GUI.Get<Panel>("window").Get<Checkbox>("female").Uncheck();
+        }
+
+        internal static void CreateCharacter_FemaleClick(object sender, CallbackArgs e) {
+            Interface.GUI.Get<Panel>("window").Get<Checkbox>("male").Uncheck();
+            Interface.GUI.Get<Panel>("window").Get<Checkbox>("female").Check();
         }
     }
 }

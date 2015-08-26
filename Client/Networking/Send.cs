@@ -33,5 +33,15 @@ namespace Client.Networking {
                 SendData(buffer.ToArray());
             }
         }
+
+        public static void AddCharacter(String name, Int32 pclass, Enumerations.Gender gender) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Client.AddCharacter);
+                buffer.WriteString(name);
+                buffer.WriteInt32(pclass);
+                buffer.WriteByte((Byte)gender);
+                SendData(buffer.ToArray());
+            }
+        }
     }
 }

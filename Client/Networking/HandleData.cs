@@ -22,7 +22,7 @@ namespace Client.Networking {
 
         internal static void HandleErrorMessage(DataBuffer buffer) {
             var message = buffer.ReadString();
-            Interface.ShowMessagebox("Error", message);
+            Interface.ShowAlertbox("Error", message);
             Program.NetworkClient.Close();
         }
 
@@ -30,7 +30,7 @@ namespace Client.Networking {
             // get amount of classes.
             var classes = buffer.ReadInt32();
 
-            for (var i = 1; i < classes; i++) {
+            for (var i = 1; i < classes + 1; i++) {
                 var c = new Class();
                 c.Name = buffer.ReadString();
                 c.MaleSprite = buffer.ReadInt32();

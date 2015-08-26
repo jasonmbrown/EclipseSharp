@@ -7,9 +7,10 @@ namespace Client.Database {
 
     public static class Data {
         #region Declarations
-        public static Dictionary<Int32, Class> Classes  = new Dictionary<Int32, Class>();
-        public static Settings  Settings                = new Settings();
-        public static String    AppPath;
+        //public static Dictionary<String, Object>    Temp       = new Dictionary<String, Object>();
+        public static Dictionary<Int32, Class>      Classes    = new Dictionary<Int32, Class>();
+        public static Settings                      Settings   = new Settings();
+        public static String                        AppPath;
         #endregion
 
         #region Methods
