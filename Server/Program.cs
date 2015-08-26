@@ -54,6 +54,7 @@ namespace Server {
             // Time to get rid of everything! .. Or well, save it to prevent data loss.
             Data.SavePlayers();
             Data.SaveClasses();
+            Data.SaveMaps();
         }
     }
 }

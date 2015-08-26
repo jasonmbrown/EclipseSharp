@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="Classes\Class.cs" />
     <Compile Include="Classes\DataBuffer.cs" />
+    <Compile Include="Classes\Map.cs" />
     <Compile Include="Classes\Player.cs" />
     <Compile Include="Classes\StateObject.cs" />
     <Compile Include="Enumerations\Enumerations.cs" />

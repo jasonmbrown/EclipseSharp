@@ -22,5 +22,6 @@ namespace Server.Database {
 
         // Max Settings
         public Int32    MaxClasses          { get; set; }
+        public Int32    MaxMaps             { get; set; }
     }
 }

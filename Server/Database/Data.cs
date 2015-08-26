@@ -11,6 +11,7 @@ namespace Server.Database {
         public static Dictionary<Int32, Player>     Players     = new Dictionary<Int32, Player>();
         public static Dictionary<Int32, TempPlayer> TempPlayers = new Dictionary<Int32, TempPlayer>();
         public static Dictionary<Int32, Class>      Classes     = new Dictionary<Int32, Class>();
+        public static Dictionary<Int32, Map>        Map         = new Dictionary<Int32, Map>();
         public static List<String>                  Characters  = new List<String>();
         public static Settings                      Settings    = new Settings();
         public static String                        AppPath;
@@ -33,7 +34,8 @@ namespace Server.Database {
                 Data.Settings.MaxUsernameChar   = 20;
                 Data.Settings.MinPasswordChar   = 3;
                 Data.Settings.MaxPasswordChar   = 20;
-                Data.Settings.MaxClasses        = 3;                
+                Data.Settings.MaxClasses        = 3;
+                Data.Settings.MaxMaps           = 100;             
                 Data.SaveSettings(filename);
             }
         }
@@ -60,14 +62,27 @@ namespace Server.Database {
             for (var i = 1; i <= Data.Settings.MaxClasses; i++) {
                 Data.LoadClass(i);
             }
+
+            // Load Maps
+            Logger.Write(String.Format("Loading {0} Maps...", Data.Settings.MaxMaps));
+            for (var i = 1; i <= Data.Settings.MaxMaps; i++) {
+                Data.LoadMap(i);
+            }
+
         }
         public static void CheckDirectories() {
             if (!Directory.Exists(Data.AppPath + "data files\\accounts")) Directory.CreateDirectory(Data.AppPath + "data files\\accounts");
             if (!Directory.Exists(Data.AppPath + "data files\\classes")) Directory.CreateDirectory(Data.AppPath + "data files\\classes");
+            if (!Directory.Exists(Data.AppPath + "data files\\maps")) Directory.CreateDirectory(Data.AppPath + "data files\\maps");
         }
         public static void SaveClasses() {
             for (var i = 0; i < Data.Settings.MaxClasses; i++) {
                 Data.SaveClass(i);
+            }
+        }
+        public static void SaveMaps() {
+            for (var i = 0; i < Data.Settings.MaxMaps; i++) {
+                Data.SaveMap(i);
             }
         }
         public static void SaveClass(Int32 id) {
@@ -156,6 +171,41 @@ namespace Server.Database {
             var ser = new System.Xml.Serialization.XmlSerializer(Data.Characters.GetType());
             using (var fs = File.OpenRead(filename)) {
                 Data.Characters = (List<String>)ser.Deserialize(fs);
+            }
+        }
+        public static void SaveMap(Int32 id) {
+            var filename = String.Format("{0}data files\\maps\\{1}.xml", Data.AppPath, id);
+
+            // Make sure we don't try to save a non-existant class.
+            if (!Data.Map.ContainsKey(id)) return;
+
+            // Delete a file should it already exist.
+            if (File.Exists(filename)) File.Delete(filename);
+
+            // Serialize our object and throw it to a file!
+            var ser = new System.Xml.Serialization.XmlSerializer(new Map().GetType());
+            using (var fs = File.OpenWrite(filename)) {
+                ser.Serialize(fs, Data.Map[id]);
+            }
+            Logger.Write(String.Format("Saved Map {0}.", id));
+        }
+        public static void LoadMap(Int32 id) {
+            var filename = String.Format("{0}data files\\maps\\{1}.xml", Data.AppPath, id);
+            // Make sure we created this class before moving on.
+            if (!Data.Map.ContainsKey(id)) {
+                var c = new Map();
+                Data.Map.Add(id, c);
+            }
+
+            // load our data.
+            if (File.Exists(filename)) {
+                var ser = new System.Xml.Serialization.XmlSerializer(Data.Map[id].GetType());
+                using (var fs = File.OpenRead(filename)) {
+                    Data.Map[id] = (Map)ser.Deserialize(fs);
+                }
+                if (Data.Map[id].Name.Length > 0) Logger.Write(String.Format("Loaded Map: {0}", Data.Map[id].Name));
+            } else {
+                Data.SaveMap(id);
             }
         }
         #endregion

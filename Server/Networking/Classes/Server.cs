@@ -103,7 +103,10 @@ namespace Server.Networking {
 
             // TODO: Notify Client that the server is full.
             if (id == 0) throw new NotImplementedException();
-            var client = socket.EndAccept(ar);
+            var client = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            try {
+                client = socket.EndAccept(ar);
+            } catch { }
             client.NoDelay = false;
 
             this.Clients.Add(id, client);
@@ -115,8 +118,10 @@ namespace Server.Networking {
             state.Connection = client;
             state.Data = new DataBuffer();
             client.LingerState = new LingerOption(true, 0);
-            client.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
-            socket.BeginAccept(new AsyncCallback(AcceptConnection), MainSocket);
+            try {
+                client.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
+                socket.BeginAccept(new AsyncCallback(AcceptConnection), MainSocket);
+            } catch { }
         }
         private void ReceiveData(IAsyncResult ar) {
             var state = (StateObject)ar.AsyncState;
@@ -140,9 +145,13 @@ namespace Server.Networking {
                     newstate.Id = state.Id;
                     newstate.Connection = state.Connection;
                     newstate.Data = new DataBuffer();
-                    newstate.Connection.BeginReceive(newstate.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), newstate);
+                    try {
+                        newstate.Connection.BeginReceive(newstate.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), newstate);
+                    } catch { }
                 } else {
-                    state.Connection.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
+                    try {
+                        state.Connection.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
+                    } catch { }
                 }
             }
         }

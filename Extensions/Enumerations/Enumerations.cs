@@ -27,7 +27,8 @@ namespace Extensions {
             Up,
             Down,
             Left,
-            Right
+            Right,
+            Direction_Count
         }
     }
 }
