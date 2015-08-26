@@ -7,13 +7,17 @@ namespace Extensions {
             NewAccount,
             Login,
             AddCharacter,
-            Logout
+            Logout,
+            RequestNewCharacter,
+            UseCharacter
         }
 
         public enum Server {
+            PlayerId,
             AlertMsg,
             ErrorMsg,
             LoginOk,
+            SelectCharacterData,
             NewCharacterData
         }
 

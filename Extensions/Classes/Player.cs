@@ -45,7 +45,7 @@ namespace Extensions.Database {
         public Byte             Gender          { get; set; }
         public Int32            Class           { get; set; }
         public Int32            Sprite          { get; set; }
-        public Byte             Level           { get; set; }
+        public Int32            Level           { get; set; }
         public Int32            Experience      { get; set; }
 
         // Stats

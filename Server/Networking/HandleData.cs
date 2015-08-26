@@ -66,11 +66,15 @@ namespace Server.Networking {
             // If we have characters, show character select.
             // Otherwise force the user to make a new character.
             if (haschars) {
-                // TODO
+                Send.SelectCharacterData(id);
             } else {
                 Send.NewCharacterData(id);
             }
 
+        }
+
+        internal static void HandleRequestNewCharacter(Int32 id, DataBuffer buffer) {
+            Send.NewCharacterData(id);
         }
 
         internal static void HandleLogout(Int32 id, DataBuffer buffer) {
@@ -181,6 +185,22 @@ namespace Server.Networking {
             HandleData.HandleUseCharacter(id, slot);
         }
         public static void HandleUseCharacter(Int32 id, Int32 slot) {
+            // Make sure the user exists.
+            if (!Data.Players.ContainsKey(id)) return;
+
+            // If the user isn't already in-game, send them all the appropriate data!
+            if (!Data.TempPlayers[id].InGame) {
+
+                // Send our client the go-ahead!
+                Send.LoginOK(id);
+
+                // Send our client our game data!
+
+                // Notify the Console.
+                Logger.Write(String.Format("ID: {0} has entered the world.", id));
+            }
+        }
+        public static void HandleUseCharacter(Int32 id, DataBuffer buffer) {
             // Make sure the user exists.
             if (!Data.Players.ContainsKey(id)) return;
 

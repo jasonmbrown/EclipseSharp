@@ -3,6 +3,7 @@ using Client.Rendering;
 using TGUI;
 using Client.Networking;
 using Extensions;
+using Client.Database;
 
 namespace Client.Logic {
     public static class UIHandlers {
@@ -60,30 +61,34 @@ namespace Client.Logic {
             if (Interface.LastWindow != Interface.Windows.None) {
                 switch (Interface.LastWindow) {
                     case Interface.Windows.Register:
-                    Interface.ChangeUI(Interface.Windows.Register);
-                    Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("username").Text = (String)Interface.LastData[0];
-                    Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("password").Text = (String)Interface.LastData[1];
-                    Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("password2").Text = (String)Interface.LastData[2];
+                        Interface.ChangeUI(Interface.Windows.Register);
+                        Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("username").Text = (String)Interface.LastData[0];
+                        Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("password").Text = (String)Interface.LastData[1];
+                        Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("password2").Text = (String)Interface.LastData[2];
                     break;
 
                     case Interface.Windows.Login:
-                    Interface.ChangeUI(Interface.Windows.Login);
-                    Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("username").Text = (String)Interface.LastData[0];
-                    Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("password").Text = (String)Interface.LastData[1];
+                        Interface.ChangeUI(Interface.Windows.Login);
+                        Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("username").Text = (String)Interface.LastData[0];
+                        Interface.GUI.Get<TGUI.Panel>("mainmenu").Get<TGUI.EditBox>("password").Text = (String)Interface.LastData[1];
                     break;
 
                     case Interface.Windows.CharacterCreate:
-                    Interface.ChangeUI(Interface.Windows.CharacterCreate);
-                    Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.EditBox>("name").Text = (String)Interface.LastData[0];
-                    Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.ComboBox>("class").SetSelectedItem((Int32)Interface.LastData[1] - 1);
-                    if ((Enumerations.Gender)Interface.LastData[2] == Enumerations.Gender.Male) {
-                        Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.Checkbox>("male").Check();
-                        Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.Checkbox>("female").Uncheck();
-                    } else {
-                        Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.Checkbox>("female").Check();
-                        Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.Checkbox>("male").Uncheck();
-                    }
+                        Interface.ChangeUI(Interface.Windows.CharacterCreate);
+                        Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.EditBox>("name").Text = (String)Interface.LastData[0];
+                        Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.ComboBox>("class").SetSelectedItem((Int32)Interface.LastData[1] - 1);
+                        if ((Enumerations.Gender)Interface.LastData[2] == Enumerations.Gender.Male) {
+                            Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.Checkbox>("male").Check();
+                            Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.Checkbox>("female").Uncheck();
+                        } else {
+                            Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.Checkbox>("female").Check();
+                            Interface.GUI.Get<TGUI.Panel>("window").Get<TGUI.Checkbox>("male").Uncheck();
+                        }
                     break;
+
+                    case Interface.Windows.CharacterSelect:
+                        Interface.ChangeUI(Interface.Windows.CharacterSelect);
+                   break;
                 }
             }
         }
@@ -167,6 +172,45 @@ namespace Client.Logic {
         internal static void CreateCharacter_FemaleClick(object sender, CallbackArgs e) {
             Interface.GUI.Get<Panel>("window").Get<Checkbox>("male").Uncheck();
             Interface.GUI.Get<Panel>("window").Get<Checkbox>("female").Check();
+        }
+
+        internal static void CharacterSelect_Char1Click(object sender, CallbackArgs e) {
+            // Make sure we have a character here or not.
+            if (Data.Players[Data.MyId].Characters[0].Name.Length > 0) {
+                Send.UseCharacter(0);
+            } else {
+                Send.RequestNewCharacter();
+            }
+            Interface.LastWindow = Interface.Windows.CharacterCreate;
+            Interface.LastData.Clear();
+            Interface.ChangeUI(Interface.Windows.Loading);
+            Interface.GUI.Get<Panel>("loadpanel").Get<Label>("loadtext").Text = "Waiting for server...";
+        }
+
+        internal static void CharacterSelect_Char2Click(object sender, CallbackArgs e) {
+            // Make sure we have a character here or not.
+            if (Data.Players[Data.MyId].Characters[1].Name.Length > 0) {
+                Send.UseCharacter(1);
+            } else {
+                Send.RequestNewCharacter();
+            }
+            Interface.LastWindow = Interface.Windows.CharacterCreate;
+            Interface.LastData.Clear();
+            Interface.ChangeUI(Interface.Windows.Loading);
+            Interface.GUI.Get<Panel>("loadpanel").Get<Label>("loadtext").Text = "Waiting for server...";
+        }
+
+        internal static void CharacterSelect_Char3Click(object sender, CallbackArgs e) {
+            // Make sure we have a character here or not.
+            if (Data.Players[Data.MyId].Characters[2].Name.Length > 0) {
+                Send.UseCharacter(2);
+            } else {
+                Send.RequestNewCharacter();
+            }
+            Interface.LastWindow = Interface.Windows.CharacterCreate;
+            Interface.LastData.Clear();
+            Interface.ChangeUI(Interface.Windows.Loading);
+            Interface.GUI.Get<Panel>("loadpanel").Get<Label>("loadtext").Text = "Waiting for server...";
         }
     }
 }

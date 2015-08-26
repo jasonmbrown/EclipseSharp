@@ -15,7 +15,9 @@ namespace Server.Networking {
             { Packets.Client.Login, HandleData.HandleLogin },
             { Packets.Client.NewAccount, HandleData.HandleNewAccount },
             { Packets.Client.AddCharacter, HandleData.HandleAddCharacter },
-            { Packets.Client.Logout, HandleData.HandleLogout }
+            { Packets.Client.Logout, HandleData.HandleLogout },
+            { Packets.Client.RequestNewCharacter, HandleData.HandleRequestNewCharacter },
+            { Packets.Client.UseCharacter, HandleData.HandleUseCharacter }
         };
 
         public static void Handle(Int32 id, DataBuffer buffer) {
@@ -31,6 +33,9 @@ namespace Server.Networking {
             var tempp = new TempPlayer();
             Data.Players.Add(id, temp);
             Data.TempPlayers.Add(id, tempp);
+
+            // Send the ID to our player.
+            Send.PlayerID(id);
         }
 
         public static void ClientDisconnected(Int32 id) {

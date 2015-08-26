@@ -115,6 +115,8 @@ namespace Client.Rendering {
         private static Boolean LoadSprite(Int32 id) {
             // make sure it exists.
             if (!Graphics.Sprite.ContainsKey(id)) return false;
+
+            // Is it loaded already? If not load it, otherwise return true and update the time.
             if (Sprite[id].Data != null) {
                 Sprite[id].LastUse = DateTime.UtcNow;
                 return true;

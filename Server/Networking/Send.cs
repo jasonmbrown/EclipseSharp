@@ -55,11 +55,28 @@ namespace Server.Networking {
                 SendDataTo(id, buffer);
             }
         }
+
+        public static void SelectCharacterData(Int32 id) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.SelectCharacterData);
+                for (var i = 0; i < Data.Players[id].Characters.Length; i++) {
+                    buffer.WriteString(Data.Players[id].Characters[i].Name);
+                    buffer.WriteInt32(Data.Players[id].Characters[i].Level);
+                }
+                SendDataTo(id, buffer);
+            }
+        }
+
         public static void LoginOK(Int32 id) {
             using (var buffer = new DataBuffer()) {
                 buffer.WriteInt32((Int32)Packets.Server.LoginOk);
+                SendDataTo(id, buffer);
+            }
+        }
+        public static void PlayerID(Int32 id) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.PlayerId);
                 buffer.WriteInt32(id);
-                buffer.WriteInt32(Data.Players.Count);
                 SendDataTo(id, buffer);
             }
         }

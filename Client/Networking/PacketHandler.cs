@@ -12,8 +12,10 @@ namespace Client.Networking {
         private static Dictionary<Packets.Server, Action<DataBuffer>> Handlers = new Dictionary<Packets.Server, Action<DataBuffer>>() {
             { Packets.Server.AlertMsg,              HandleData.HandleAlertMessage },
             { Packets.Server.ErrorMsg,              HandleData.HandleErrorMessage },
+            { Packets.Server.PlayerId,              HandleData.HandlePlayerId },
             { Packets.Server.LoginOk,               HandleData.HandleLoginOk },
-            { Packets.Server.NewCharacterData,       HandleData.HandleCreateCharacterData }
+            { Packets.Server.NewCharacterData,      HandleData.HandleCreateCharacterData },
+            { Packets.Server.SelectCharacterData,   HandleData.HandleSelectCharacterData } 
         };
 
         public static void Handle(DataBuffer buffer) {

@@ -101,6 +101,7 @@ namespace Server.Networking {
             var socket = (Socket)ar.AsyncState;
             var id = FindNewId();
 
+            // TODO: Notify Client that the server is full.
             if (id == 0) throw new NotImplementedException();
             var client = socket.EndAccept(ar);
             client.NoDelay = false;

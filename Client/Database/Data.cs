@@ -9,8 +9,10 @@ namespace Client.Database {
         #region Declarations
         //public static Dictionary<String, Object>    Temp       = new Dictionary<String, Object>();
         public static Dictionary<Int32, Class>      Classes    = new Dictionary<Int32, Class>();
+        public static Dictionary<Int32, Player>     Players    = new Dictionary<Int32, Player>();
         public static Settings                      Settings   = new Settings();
         public static String                        AppPath;
+        public static Int32                         MyId;
         #endregion
 
         #region Methods
