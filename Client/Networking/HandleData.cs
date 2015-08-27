@@ -58,7 +58,8 @@ namespace Client.Networking {
                         for (var x = 0; x < Data.Map.SizeX; x++) {
                             for (var y = 0; y < Data.Map.SizeY; y++) {
                                 Data.Map.Layers[l].Tiles[x, y].Tileset = re.ReadInt32();
-                                Data.Map.Layers[l].Tiles[x, y].Tile = re.ReadInt32();
+                                Data.Map.Layers[l].Tiles[x, y].TileX = re.ReadInt32();
+                                Data.Map.Layers[l].Tiles[x, y].TileY = re.ReadInt32();
                             }
                         }
                     }

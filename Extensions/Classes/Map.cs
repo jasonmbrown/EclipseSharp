@@ -55,24 +55,20 @@ namespace Extensions.Database {
             }
         }
         #endregion
-
-        #region Methods
-        public Int32 Translate(Int32 x, Int32 y) {
-            return (x + 1) * (y + 1);
-        }
-        #endregion
     }
 
     public class TileData {
 
         #region Declarations
         public Int32 Tileset    { get; set; }
-        public Int32 Tile       { get; set; }
+        public Int32 TileX      { get; set; }
+        public Int32 TileY      { get; set; }
         #endregion
 
         #region Constructors
         public TileData() {
-            this.Tile       = 0;
+            this.TileX       = 0;
+            this.TileY      = 0;
             this.Tileset    = 0;
         }
         #endregion

@@ -200,7 +200,8 @@ namespace Server.Database {
                         for (var x = 0; x < Data.Map[id].SizeX; x++) {
                             for (var y = 0; y < Data.Map[id].SizeY; y++) {
                                 wr.Write(l.Tiles[x, y].Tileset);
-                                wr.Write(l.Tiles[x, y].Tile);
+                                wr.Write(l.Tiles[x, y].TileX);
+                                wr.Write(l.Tiles[x, y].TileY);
                             }
                         }
                     }
@@ -229,7 +230,8 @@ namespace Server.Database {
                         for (var x = 0; x < Data.Map[id].SizeX; x++) {
                             for (var y = 0; y < Data.Map[id].SizeY; y++) {
                                 wr.Write(l.Tiles[x, y].Tileset);
-                                wr.Write(l.Tiles[x, y].Tile);
+                                wr.Write(l.Tiles[x, y].TileX);
+                                wr.Write(l.Tiles[x, y].TileY);
                             }
                         }
                     }
@@ -268,7 +270,8 @@ namespace Server.Database {
                             for (var x = 0; x < Data.Map[id].SizeX; x++) {
                                 for (var y = 0; y < Data.Map[id].SizeY; y++) {
                                     Data.Map[id].Layers[l].Tiles[x, y].Tileset = re.ReadInt32();
-                                    Data.Map[id].Layers[l].Tiles[x, y].Tile = re.ReadInt32();
+                                    Data.Map[id].Layers[l].Tiles[x, y].TileX = re.ReadInt32();
+                                    Data.Map[id].Layers[l].Tiles[x, y].TileY = re.ReadInt32();
                                 }
                             }
                         }

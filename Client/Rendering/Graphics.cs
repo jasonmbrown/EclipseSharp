@@ -1,9 +1,11 @@
 ﻿using System;
 using SFML.Window;
 using SFML.Graphics;
+using SFML.System;
 using System.Collections.Generic;
 using System.IO;
 using Client.Database;
+using Extensions.Database;
 
 namespace Client.Rendering {
     static class Graphics {
@@ -43,6 +45,7 @@ namespace Client.Rendering {
             Interface.GUI.Get<TGUI.Panel>("loadpanel").Get<TGUI.Label>("loadtext").Text = "Initializing Graphics...";
             Graphics.RenderScreenOnce();
             Graphics.InitSprites();
+            Graphics.InitTilesets();
 
             // Done loading! Start the real menu.
             Interface.ChangeUI(Interface.Windows.MainMenu);
@@ -57,6 +60,17 @@ namespace Client.Rendering {
             while (Screen.IsOpen) {
                 // Clear the screen of all data.
                 Screen.Clear(Color.Green);
+
+                // Only render this if we're in-game.
+                if (Data.InGame) {
+                    // Render our lower layers.
+                    Graphics.DrawMap(true);
+
+
+
+                    // Render our upper layers.
+                    Graphics.DrawMap(false);
+                }
 
                 // Render the UI on top of everything!
                 Interface.Draw();
@@ -112,6 +126,36 @@ namespace Client.Rendering {
                 }
             }
         }
+        private static void InitTilesets() {
+            var id = 0;
+            var done = false;
+            while (!done) {
+                id++;
+                if (File.Exists(String.Format("{0}data files\\tilesets\\{1}.png", Data.AppPath, id))) {
+                    var texdata = new TexData();
+                    texdata.File = String.Format("{0}data files\\tilesets\\{1}.png", Data.AppPath, id);
+                    Graphics.Tileset.Add(id, texdata);
+                } else {
+                    done = true;
+                }
+            }
+        }
+        private static Boolean LoadTileset(Int32 id) {
+            // make sure it exists.
+            if (!Graphics.Tileset.ContainsKey(id)) return false;
+
+            // Is it loaded already? If not load it, otherwise return true and update the time.
+            if (Tileset[id].Data != null) {
+                Tileset[id].LastUse = DateTime.UtcNow;
+                return true;
+            } else {
+                using (var fs = File.OpenRead(Tileset[id].File)) {
+                    Tileset[id].Data = new Texture(fs);
+                    Tileset[id].LastUse = DateTime.UtcNow;
+                    return true;
+                }
+            }
+        }
         private static Boolean LoadSprite(Int32 id) {
             // make sure it exists.
             if (!Graphics.Sprite.ContainsKey(id)) return false;
@@ -132,6 +176,29 @@ namespace Client.Rendering {
             if (!Graphics.Sprite.ContainsKey(id)) return null;
             Graphics.LoadSprite(id);
             return Graphics.Sprite[id].Data;
+        }
+        public static Texture GetTileset(Int32 id) {
+            if (!Graphics.Tileset.ContainsKey(id)) return null;
+            Graphics.LoadTileset(id);
+            return Graphics.Tileset[id].Data;
+        }
+        public static void DrawMap(Boolean belowplayer) {
+            foreach (var layer in Data.Map.Layers) {
+                if (layer.BelowPlayer = belowplayer) {
+                    for (var x = 0; x < Data.Map.SizeX; x++) {
+                        for (var y = 0; y < Data.Map.SizeY; y++) {
+                            Graphics.DrawTile(layer.Tiles[x,y], x, y);
+                        }
+                    }
+                }
+            }
+        }
+        public static void DrawTile(TileData tile, Int32 x, Int32 y) {
+            var spr = new Sprite(Graphics.GetTileset(tile.Tileset));
+            if (spr == null) return;
+            spr.TextureRect = new IntRect(new Vector2i(tile.TileX * 32, tile.TileY * 32), new Vector2i(32, 32));
+            spr.Position = new Vector2f(x * 32, y * 32);
+            Screen.Draw(spr);
         }
         #endregion
     }
