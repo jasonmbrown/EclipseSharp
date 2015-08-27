@@ -102,6 +102,19 @@ namespace Server.Networking {
                 SendDataTo(id, buffer);
             }
         }
+        public static void ChatMessageMap(Int32 sender, Int32 map, String msg) {
+            using(var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.ChatMessage);
+                buffer.WriteString(String.Format("[{0}]: {1}", Data.Players[sender].Characters[Data.TempPlayers[sender].CurrentCharacter].Name, msg));
+                for (var i = 1; i < Data.Players.Count + 1; i++) {
+                    if (Data.Players.ContainsKey(i)) {
+                        if (Data.Players[i].Characters[Data.TempPlayers[i].CurrentCharacter].Map == map && Data.TempPlayers[i].InGame) {
+                            SendDataTo(i, buffer);
+                        }
+                    }
+                }
+            }
+        }
         #endregion
     }
 }

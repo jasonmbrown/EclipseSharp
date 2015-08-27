@@ -11,7 +11,8 @@ namespace Extensions {
             RequestNewCharacter,
             UseCharacter,
             MapOK,
-            RequestMap
+            RequestMap,
+            ChatMessage
         }
 
         public enum Server {
@@ -24,6 +25,7 @@ namespace Extensions {
             LoadMap,
             MapData,
             InGame,
+            ChatMessage
         }
 
     }

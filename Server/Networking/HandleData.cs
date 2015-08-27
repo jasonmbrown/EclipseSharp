@@ -73,6 +73,11 @@ namespace Server.Networking {
 
         }
 
+        internal static void HandleChatMessage(Int32 id, DataBuffer buffer) {
+            var msg = buffer.ReadString();
+            Send.ChatMessageMap(id, Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map, msg);
+        }
+
         internal static void HandleMapOK(Int32 id, DataBuffer buffer) {
             Data.TempPlayers[id].InGame = true;
 

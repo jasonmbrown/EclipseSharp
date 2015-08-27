@@ -60,7 +60,7 @@ namespace Client.Rendering {
         private static void RenderScreen() {
             while (Screen.IsOpen) {
                 // Clear the screen of all data.
-                Screen.Clear(Color.Green);
+                Screen.Clear(Color.Black);
 
                 // Only render this if we're in-game.
                 if (Data.InGame) {
@@ -102,7 +102,7 @@ namespace Client.Rendering {
             
         }
         private static void WindowKeyPressed(object sender, KeyEventArgs e) {
-            
+            Logic.UIHandlers.WindowKeyPressed(e);
         }
         private static void WindowClosed(object sender, EventArgs e) {
             // Destroy all graphical elements!.

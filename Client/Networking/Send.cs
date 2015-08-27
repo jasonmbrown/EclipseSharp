@@ -68,5 +68,12 @@ namespace Client.Networking {
                 SendData(buffer);
             }
         }
+        public static void ChatMessage(String msg) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Client.ChatMessage);
+                buffer.WriteString(msg);
+                SendData(buffer);
+            }
+        }
     }
 }

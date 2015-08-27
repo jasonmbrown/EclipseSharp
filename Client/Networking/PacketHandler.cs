@@ -18,7 +18,8 @@ namespace Client.Networking {
             { Packets.Server.SelectCharacterData,   HandleData.HandleSelectCharacterData },
             { Packets.Server.LoadMap,               HandleData.HandleLoadMap },
             { Packets.Server.MapData,               HandleData.HandleMapData },
-            { Packets.Server.InGame,                HandleData.HandleInGame }
+            { Packets.Server.InGame,                HandleData.HandleInGame },
+            { Packets.Server.ChatMessage,           HandleData.HandleChatMessage }
         };
 
         public static void Handle(DataBuffer buffer) {

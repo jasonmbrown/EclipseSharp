@@ -397,6 +397,16 @@ namespace Client.Rendering {
         }
         private static void CreateGame() {
 
+            var chatbox = GUI.Add(new ChatBox(Theme), "chat");
+            chatbox.Transparency = 128;
+            chatbox.Size = new Vector2f(400, 150);
+            chatbox.Position = new Vector2f(5, Data.Settings.Graphics.ResolutionY - (chatbox.Size.Y + 30));
+            chatbox.TextSize = 12;
+
+            var chatinput = GUI.Add(new EditBox(Theme), "chatinput");
+            chatinput.Size = new Vector2f(chatbox.Size.X, 20);
+            chatinput.Position = new Vector2f(5, Data.Settings.Graphics.ResolutionY - (chatinput.Size.Y + 5));
+            chatinput.Visible = false;
 
             CurrentUI = Windows.Game;
             LastData.Clear();

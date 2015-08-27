@@ -69,6 +69,12 @@ namespace Client.Networking {
             Send.MapOK();
         }
 
+        internal static void HandleChatMessage(DataBuffer buffer) {
+            var msg = buffer.ReadString();
+            if (!Data.InGame) return;
+            Interface.GUI.Get<TGUI.ChatBox>("chat").AddLine(msg, SFML.Graphics.Color.Black);
+        }
+
         internal static void HandleInGame(DataBuffer obj) {
             Interface.ChangeUI(Interface.Windows.Game);
             Data.InGame = true;

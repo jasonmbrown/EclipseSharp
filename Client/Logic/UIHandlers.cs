@@ -4,6 +4,7 @@ using TGUI;
 using Client.Networking;
 using Extensions;
 using Client.Database;
+using SFML.Window;
 
 namespace Client.Logic {
     public static class UIHandlers {
@@ -90,6 +91,22 @@ namespace Client.Logic {
                         Interface.ChangeUI(Interface.Windows.CharacterSelect);
                    break;
                 }
+            }
+        }
+
+        internal static void WindowKeyPressed(KeyEventArgs e) {
+            if (!Data.InGame) return;
+            switch (e.Code) {
+                case Keyboard.Key.Return:
+                    if (Interface.GUI.Get<EditBox>("chatinput").Visible) {
+                        Send.ChatMessage(Interface.GUI.Get<EditBox>("chatinput").Text);
+                        Interface.GUI.Get<EditBox>("chatinput").Text = "";
+                        Interface.GUI.Get<EditBox>("chatinput").Visible = false;
+                    } else {
+                        Interface.GUI.Get<EditBox>("chatinput").Visible = true;
+                        Interface.GUI.Get<EditBox>("chatinput").Focused = true;
+                    }
+                    break;
             }
         }
 
