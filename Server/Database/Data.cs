@@ -12,6 +12,7 @@ namespace Server.Database {
         public static Dictionary<Int32, TempPlayer> TempPlayers = new Dictionary<Int32, TempPlayer>();
         public static Dictionary<Int32, Class>      Classes     = new Dictionary<Int32, Class>();
         public static Dictionary<Int32, Map>        Map         = new Dictionary<Int32, Map>();
+        public static Dictionary<Int32, Byte[]>     MapCache    = new Dictionary<Int32, Byte[]>();
         public static List<String>                  Characters  = new List<String>();
         public static Settings                      Settings    = new Settings();
         public static String                        AppPath;
@@ -67,6 +68,7 @@ namespace Server.Database {
             Logger.Write(String.Format("Loading {0} Maps...", Data.Settings.MaxMaps));
             for (var i = 1; i <= Data.Settings.MaxMaps; i++) {
                 Data.LoadMap(i);
+                Data.CreateMapCache(i);
             }
 
         }
@@ -205,6 +207,36 @@ namespace Server.Database {
                 }
             }
             Logger.Write(String.Format("Saved Map {0}.", id));
+        }
+
+        public static void CreateMapCache(Int32 id) {
+            // Make sure we don't try to save a non-existant map.
+            if (Data.MapCache.ContainsKey(id)) Data.MapCache.Remove(id);
+
+            using (var fs = new MemoryStream()) {
+                using (var wr = new BinaryWriter(fs)) {
+                    wr.Write(Data.Map[id].Name);
+                    wr.Write(Data.Map[id].Music);
+                    wr.Write(Data.Map[id].Revision);
+                    wr.Write(Data.Map[id].SizeX);
+                    wr.Write(Data.Map[id].SizeY);
+
+                    wr.Write(Data.Map[id].Layers.Count);
+
+                    foreach (var l in Data.Map[id].Layers) {
+                        wr.Write(l.Name);
+                        wr.Write(l.BelowPlayer);
+                        for (var x = 0; x < Data.Map[id].SizeX; x++) {
+                            for (var y = 0; y < Data.Map[id].SizeY; y++) {
+                                wr.Write(l.Tiles[x, y].Tileset);
+                                wr.Write(l.Tiles[x, y].Tile);
+                            }
+                        }
+                    }
+                }
+                Data.MapCache.Add(id, fs.ToArray());
+            }
+            Logger.Write(String.Format("Created mapcache for Map {0}.", id));
         }
         public static void LoadMap(Int32 id) {
             var filename = String.Format("{0}data files\\maps\\{1}.dat", Data.AppPath, id);
