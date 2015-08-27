@@ -198,7 +198,7 @@ namespace Client.Rendering {
             }
         }
         public static void DrawTile(TileData tile, Int32 x, Int32 y) {
-            var spr = new Sprite(Graphics.GetTileset(1));
+            var spr = new Sprite(Graphics.GetTileset(tile.Tileset));
             if (spr == null) return;
             spr.TextureRect = new IntRect(new Vector2i(tile.TileX * 32, tile.TileY * 32), new Vector2i(32, 32));
             spr.Position = new Vector2f(Graphics.OffSet.X + (x * 32), Graphics.OffSet.Y + (y * 32));
