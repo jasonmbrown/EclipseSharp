@@ -53,8 +53,8 @@ namespace Extensions.Database {
 
         // Position
         public Int32            Map             { get; set; }
-        public Byte             X               { get; set; }
-        public Byte             Y               { get; set; }
+        public Int32            X               { get; set; }
+        public Int32            Y               { get; set; }
         public Byte             Direction       { get; set; }
         #endregion
 

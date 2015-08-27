@@ -298,17 +298,17 @@ namespace Client.Rendering {
             label.Position      = new Vector2f((window.Size.X / 2) - (label.Size.X / 2), 10);
 
             var chr1            = window.Add(new Button(Theme), "chr1");
-            chr1.Text           = Data.Players[Data.MyId].Characters[0].Name.Length < 1 ? "Create" : String.Format("{0} Lv.{1}", Data.Players[Data.MyId].Characters[0].Name, Data.Players[Data.MyId].Characters[0].Level);
+            chr1.Text           = Data.CharSelect[0].Name.Length < 1 ? "Create" : String.Format("{0} Lv.{1}", Data.CharSelect[0].Name, Data.CharSelect[0].Level);
             chr1.Position       = new Vector2f(5, (window.Size.Y / 2) - (chr1.Size.Y / 2));
             chr1.LeftMouseClickedCallback += UIHandlers.CharacterSelect_Char1Click;
 
             var chr2            = window.Add(new Button(Theme), "chr2");
-            chr2.Text           = Data.Players[Data.MyId].Characters[1].Name.Length < 1 ? "Create" : String.Format("{0} Lv.{1}", Data.Players[Data.MyId].Characters[1].Name, Data.Players[Data.MyId].Characters[1].Level);
+            chr2.Text           = Data.CharSelect[1].Name.Length < 1 ? "Create" : String.Format("{0} Lv.{1}", Data.CharSelect[1].Name, Data.CharSelect[1].Level);
             chr2.Position       = new Vector2f((window.Size.X / 2) - (chr2.Size.X / 2), (window.Size.Y / 2) - (chr2.Size.Y / 2));
             chr2.LeftMouseClickedCallback += UIHandlers.CharacterSelect_Char2Click;
 
             var chr3            = window.Add(new Button(Theme), "chr3");
-            chr3.Text           = Data.Players[Data.MyId].Characters[2].Name.Length < 1 ? "Create" : String.Format("{0} Lv.{1}", Data.Players[Data.MyId].Characters[2].Name, Data.Players[Data.MyId].Characters[2].Level);
+            chr3.Text           = Data.CharSelect[2].Name.Length < 1 ? "Create" : String.Format("{0} Lv.{1}", Data.CharSelect[2].Name, Data.CharSelect[2].Level);
             chr3.Position       = new Vector2f(window.Size.X - (chr3.Size.X + 5), (window.Size.Y / 2) - (chr2.Size.Y / 2));
             chr3.LeftMouseClickedCallback += UIHandlers.CharacterSelect_Char3Click;
 

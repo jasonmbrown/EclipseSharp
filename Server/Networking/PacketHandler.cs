@@ -5,6 +5,7 @@ using Server.Logic;
 using System.Collections.Generic;
 using Extensions.Networking;
 using Extensions.Database;
+using System.Linq;
 
 namespace Server.Networking {
     static class PacketHandler {
@@ -45,6 +46,14 @@ namespace Server.Networking {
             // Save our player data
             if (Data.Players[id].Username.Length > 0) {
                 Data.SavePlayer(id);
+            }
+
+            // Remove our player from other clients.
+            for (var i = 0; i < Data.Players.Count; i++) {
+                var key = Data.Players.ElementAt(i).Key;
+                if (Data.TempPlayers[key].InGame && key != id) {
+                    Send.RemovePlayer(key, id);
+                }
             }
 
             // Remove our player from our system!

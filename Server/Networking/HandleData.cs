@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.IO;
 using Extensions;
 using Extensions.Networking;
+using System.Linq;
 
 namespace Server.Networking {
     static class HandleData {
@@ -213,10 +214,19 @@ namespace Server.Networking {
                 // Send our client the go-ahead!
                 Send.LoginOK(id);
 
-                // Send our client our game data!
+                // Send our clients their game data!
+                // This includes everyone on the same map as our lovely friend.
+                Send.PlayerData(id, id);
+                for (var i = 0; i < Data.Players.Count; i++) {
+                    var key = Data.Players.ElementAt(i).Key;
+                    if (Data.TempPlayers[key].InGame && Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Map == Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map) {
+                        Send.PlayerData(key, id);
+                    }
+                }
 
                 // Now send our friendly friend our map!
                 Send.LoadMap(id, Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map);
+
             }
         }
         public static void HandleUseCharacter(Int32 id, DataBuffer buffer) {

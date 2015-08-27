@@ -8,6 +8,7 @@ using Client.Rendering;
 using Extensions.Database;
 using Client.Database;
 using System.IO;
+using Extensions;
 
 namespace Client.Networking {
     public static class HandleData {
@@ -31,7 +32,7 @@ namespace Client.Networking {
 
         internal static void HandlePlayerId(DataBuffer buffer) {
             Data.MyId = buffer.ReadInt32();
-            var p = new Player();
+            var p = new Character();
             Data.Players.Add(Data.MyId, p);
         }
 
@@ -69,6 +70,40 @@ namespace Client.Networking {
             Send.MapOK();
         }
 
+        internal static void HandleRemovePlayer(DataBuffer buffer) {
+            var id = buffer.ReadInt32();
+            if (!Data.Players.ContainsKey(id)) return;
+            Data.Players.Remove(id);
+        }
+
+        internal static void HandlePlayerData(DataBuffer buffer) {
+            var id = buffer.ReadInt32();
+            if (!Data.Players.ContainsKey(id)) Data.Players.Add(id, new Character());
+
+            Data.Players[id].Name = buffer.ReadString();
+            Data.Players[id].Gender = buffer.ReadByte();
+            Data.Players[id].Class = buffer.ReadInt32();
+            Data.Players[id].Level = buffer.ReadInt32();
+            Data.Players[id].Experience = buffer.ReadInt32();
+            Data.Players[id].Sprite = buffer.ReadInt32();
+            Data.Players[id].Map = buffer.ReadInt32();
+            Data.Players[id].X = buffer.ReadInt32();
+            Data.Players[id].Y = buffer.ReadInt32();
+            Data.Players[id].Direction = buffer.ReadByte();
+            for (var i = 0; i < (Int32)Enumerations.Stats.Stat_Count - 1; i++) {
+                Data.Players[id].Statistic[i] = buffer.ReadInt32();
+            }
+        }
+
+        internal static void HandlePlayerLocation(DataBuffer buffer) {
+            var id = buffer.ReadInt32();
+            if (!Data.Players.ContainsKey(id)) return;
+            Data.Players[id].Map = buffer.ReadInt32();
+            Data.Players[id].X = buffer.ReadInt32();
+            Data.Players[id].Y = buffer.ReadInt32();
+            Data.Players[id].Direction = buffer.ReadByte();
+        }
+
         internal static void HandleChatMessage(DataBuffer buffer) {
             var msg = buffer.ReadString();
             if (!Data.InGame) return;
@@ -97,9 +132,10 @@ namespace Client.Networking {
 
         internal static void HandleSelectCharacterData(DataBuffer buffer) {
             // Retrieve our data.
-            for (var i = 0; i < Data.Players[Data.MyId].Characters.Length; i++) {
-                Data.Players[Data.MyId].Characters[i].Name  = buffer.ReadString();
-                Data.Players[Data.MyId].Characters[i].Level = buffer.ReadInt32();
+            for (var i = 0; i < Data.CharSelect.Length; i++) {
+                Data.CharSelect[i] = new Character();
+                Data.CharSelect[i].Name  = buffer.ReadString();
+                Data.CharSelect[i].Level = buffer.ReadInt32();
             }
 
             // Move to the select screen.

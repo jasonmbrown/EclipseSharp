@@ -19,7 +19,10 @@ namespace Client.Networking {
             { Packets.Server.LoadMap,               HandleData.HandleLoadMap },
             { Packets.Server.MapData,               HandleData.HandleMapData },
             { Packets.Server.InGame,                HandleData.HandleInGame },
-            { Packets.Server.ChatMessage,           HandleData.HandleChatMessage }
+            { Packets.Server.ChatMessage,           HandleData.HandleChatMessage },
+            { Packets.Server.PlayerLocation,        HandleData.HandlePlayerLocation },
+            { Packets.Server.PlayerData,            HandleData.HandlePlayerData },
+            { Packets.Server.RemovePlayer,          HandleData.HandleRemovePlayer }
         };
 
         public static void Handle(DataBuffer buffer) {

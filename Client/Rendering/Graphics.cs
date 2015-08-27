@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.IO;
 using Client.Database;
 using Extensions.Database;
+using Extensions;
+using System.Linq;
 
 namespace Client.Rendering {
     static class Graphics {
@@ -16,6 +18,7 @@ namespace Client.Rendering {
         private static Dictionary<Int32, TexData>   Tileset   = new Dictionary<Int32, TexData>();
         private static Dictionary<Int32, TexData>   Sprite    = new Dictionary<Int32, TexData>();
         private static Vector2i                     OffSet;
+        private static Font                         NameFont;
         #endregion
 
         #region Methods
@@ -45,6 +48,7 @@ namespace Client.Rendering {
             // Initialize our Graphics.
             Interface.GUI.Get<TGUI.Panel>("loadpanel").Get<TGUI.Label>("loadtext").Text = "Initializing Graphics...";
             Graphics.RenderScreenOnce();
+            Graphics.NameFont = new Font(String.Format("{0}data files\\interface\\names.ttf", Data.AppPath));
             Graphics.InitSprites();
             Graphics.InitTilesets();
 
@@ -70,10 +74,14 @@ namespace Client.Rendering {
                     // Render our lower layers.
                     Graphics.DrawMap(true);
 
-
+                    // Draw our players.
+                    Graphics.DrawPlayers();
 
                     // Render our upper layers.
                     Graphics.DrawMap(false);
+
+                    // Draw player names.
+                    Graphics.DrawPlayerNames();
                 }
 
                 // Render the UI on top of everything!
@@ -210,14 +218,61 @@ namespace Client.Rendering {
             if (Data.Map.SizeX * 32 < Data.Settings.Graphics.ResolutionX) {
                 x = (Data.Settings.Graphics.ResolutionX / 2) - ((Data.Map.SizeX * 32) / 2);
             } else {
-                x = (Data.Players[Data.MyId].Characters[0].X * 32) / 2;
+                x = (Data.Players[Data.MyId].X * 32) / 2;
             }
             if (Data.Map.SizeY * 32 < Data.Settings.Graphics.ResolutionY) {
                 y = (Data.Settings.Graphics.ResolutionX / 2) - ((Data.Map.SizeX * 32) / 2);
             } else {
-                y = (Data.Players[Data.MyId].Characters[0].Y * 32) / 2;
+                y = (Data.Players[Data.MyId].Y * 32) / 2;
             }
             Graphics.OffSet = new Vector2i(x, y);
+        }
+        public static void DrawPlayers() {
+            for (var i = 0; i < Data.Players.Count; i++) {
+                var key = Data.Players.ElementAt(i).Key;
+                if (Data.Players[key].Map == Data.Players[Data.MyId].Map) {
+                    Graphics.DrawSprite(Data.Players[key].Sprite, (Enumerations.Direction)Data.Players[key].Direction, 0, Data.Players[key].X, Data.Players[key].Y);
+                }
+            }
+        }
+        public static void DrawSprite(Int32 spr, Enumerations.Direction dir, Int32 frame, Int32 x, Int32 y) {
+            var sp = new Sprite(Graphics.GetSprite(spr));
+            if (sp.Texture == null) return;
+            Int32 yoffset = 0;
+            switch (dir) {
+                case Enumerations.Direction.Up:
+                    yoffset = (Int32)(sp.Texture.Size.Y / 4) * 3;
+                break;
+                case Enumerations.Direction.Right:
+                    yoffset = (Int32)(sp.Texture.Size.Y / 4) * 2;
+                break;
+                case Enumerations.Direction.Down:
+                    yoffset = 0;
+                break;
+                case Enumerations.Direction.Left:
+                yoffset = (Int32)(sp.Texture.Size.Y / 4);
+                break;
+            }
+            sp.TextureRect = new IntRect(new Vector2i(0, yoffset), new Vector2i((Int32)sp.Texture.Size.X / 4, (Int32)sp.Texture.Size.Y / 4));
+            sp.Position = new Vector2f(x - ((Int32)sp.Texture.Size.X / 4) / 2, y - ((Int32)sp.Texture.Size.X / 4));
+            Screen.Draw(sp);
+        }
+        public static void DrawPlayerNames() {
+            for (var i = 0; i < Data.Players.Count; i++) {
+                var key = Data.Players.ElementAt(i).Key;
+                if (Data.Players[key].Map == Data.Players[Data.MyId].Map) {
+                    Graphics.DrawPlayerName(key, Data.Players[key].X, Data.Players[key].Y);
+                }
+            }
+        }
+        public static void DrawPlayerName(Int32 id, Int32 x, Int32 y) {
+            var tex = Graphics.GetSprite(Data.Players[id].Sprite);
+            if (tex == null || Data.Players[id].Name.Length < 1) return;
+            var name = new Text(Data.Players[id].Name, Graphics.NameFont);
+            name.CharacterSize = 12;
+            name.Color = Color.Yellow;
+            name.Position = new Vector2f(x - (name.DisplayedString.Length * 3), y - (tex.Size.Y / 4));
+            Screen.Draw(name);
         }
         #endregion
     }

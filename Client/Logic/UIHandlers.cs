@@ -193,7 +193,7 @@ namespace Client.Logic {
 
         internal static void CharacterSelect_Char1Click(object sender, CallbackArgs e) {
             // Make sure we have a character here or not.
-            if (Data.Players[Data.MyId].Characters[0].Name.Length > 0) {
+            if (Data.CharSelect[0].Name.Length > 0) {
                 Send.UseCharacter(0);
             } else {
                 Send.RequestNewCharacter();
@@ -206,7 +206,7 @@ namespace Client.Logic {
 
         internal static void CharacterSelect_Char2Click(object sender, CallbackArgs e) {
             // Make sure we have a character here or not.
-            if (Data.Players[Data.MyId].Characters[1].Name.Length > 0) {
+            if (Data.CharSelect[1].Name.Length > 0) {
                 Send.UseCharacter(1);
             } else {
                 Send.RequestNewCharacter();
@@ -219,7 +219,7 @@ namespace Client.Logic {
 
         internal static void CharacterSelect_Char3Click(object sender, CallbackArgs e) {
             // Make sure we have a character here or not.
-            if (Data.Players[Data.MyId].Characters[2].Name.Length > 0) {
+            if (Data.CharSelect[2].Name.Length > 0) {
                 Send.UseCharacter(2);
             } else {
                 Send.RequestNewCharacter();

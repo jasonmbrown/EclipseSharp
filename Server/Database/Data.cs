@@ -36,7 +36,10 @@ namespace Server.Database {
                 Data.Settings.MinPasswordChar   = 3;
                 Data.Settings.MaxPasswordChar   = 20;
                 Data.Settings.MaxClasses        = 3;
-                Data.Settings.MaxMaps           = 100;             
+                Data.Settings.MaxMaps           = 100;
+                Data.Settings.StartMap          = 1;
+                Data.Settings.StartX            = 50;
+                Data.Settings.StartY            = 50;   
                 Data.SaveSettings(filename);
             }
         }

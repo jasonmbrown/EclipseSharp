@@ -10,7 +10,8 @@ namespace Client.Database {
         //public static Dictionary<String, Object>    Temp       = new Dictionary<String, Object>();
         public static Map                           Map         = new Map();
         public static Dictionary<Int32, Class>      Classes     = new Dictionary<Int32, Class>();
-        public static Dictionary<Int32, Player>     Players     = new Dictionary<Int32, Player>();
+        public static Dictionary<Int32, Character>  Players     = new Dictionary<Int32, Character>();
+        public static Character[]                   CharSelect  = new Character[3];
         public static Settings                      Settings    = new Settings();
         public static String                        AppPath;
         public static Int32                         MyId;

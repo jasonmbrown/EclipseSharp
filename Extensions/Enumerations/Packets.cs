@@ -25,7 +25,10 @@ namespace Extensions {
             LoadMap,
             MapData,
             InGame,
-            ChatMessage
+            ChatMessage,
+            PlayerLocation,
+            PlayerData,
+            RemovePlayer
         }
 
     }

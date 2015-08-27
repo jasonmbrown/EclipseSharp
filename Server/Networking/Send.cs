@@ -2,6 +2,7 @@
 using Server.Database;
 using Extensions;
 using Extensions.Networking;
+using System.Linq;
 
 namespace Server.Networking {
     static class Send {
@@ -106,13 +107,51 @@ namespace Server.Networking {
             using(var buffer = new DataBuffer()) {
                 buffer.WriteInt32((Int32)Packets.Server.ChatMessage);
                 buffer.WriteString(String.Format("[{0}]: {1}", Data.Players[sender].Characters[Data.TempPlayers[sender].CurrentCharacter].Name, msg));
-                for (var i = 1; i < Data.Players.Count + 1; i++) {
-                    if (Data.Players.ContainsKey(i)) {
-                        if (Data.Players[i].Characters[Data.TempPlayers[i].CurrentCharacter].Map == map && Data.TempPlayers[i].InGame) {
-                            SendDataTo(i, buffer);
+                for (var i = 0; i < Data.Players.Count; i++) {
+                    if (Data.Players.ContainsKey(Data.Players.ElementAt(i).Key)) {
+                        var key = Data.Players.ElementAt(i).Key;
+                        if (Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Map == map && Data.TempPlayers[key].InGame) {
+                            SendDataTo(key, buffer);
                         }
                     }
                 }
+            }
+        }
+        public static void PlayerLocation(Int32 id, Int32 player) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.PlayerLocation);
+                buffer.WriteInt32(player);
+                buffer.WriteInt32(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Map);
+                buffer.WriteInt32(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].X);
+                buffer.WriteInt32(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Y);
+                buffer.WriteByte(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Direction);
+            }
+        }
+        public static void PlayerData(Int32 id, Int32 player) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.PlayerData);
+                buffer.WriteInt32(player);
+                buffer.WriteString(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Name);
+                buffer.WriteByte(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Gender);
+                buffer.WriteInt32(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Class);
+                buffer.WriteInt32(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Level);
+                buffer.WriteInt32(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Experience);
+                buffer.WriteInt32(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Sprite);
+                buffer.WriteInt32(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Map);
+                buffer.WriteInt32(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].X);
+                buffer.WriteInt32(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Y);
+                buffer.WriteByte(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Direction);
+                for (var i = 0; i < (Int32)Enumerations.Stats.Stat_Count - 1; i++) {
+                    buffer.WriteInt32(Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Statistic[i]);
+                }
+                SendDataTo(id, buffer);
+            }
+        }
+        public static void RemovePlayer(Int32 id, Int32 player) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.RemovePlayer);
+                buffer.WriteInt32(player);
+                SendDataTo(id, buffer);
             }
         }
         #endregion
