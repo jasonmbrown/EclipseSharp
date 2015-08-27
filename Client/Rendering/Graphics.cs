@@ -13,8 +13,9 @@ namespace Client.Rendering {
         #region Declarations
         private static RenderWindow Screen;
 
-        private static Dictionary<Int32, TexData> Tileset   = new Dictionary<Int32, TexData>();
-        private static Dictionary<Int32, TexData> Sprite    = new Dictionary<Int32, TexData>();
+        private static Dictionary<Int32, TexData>   Tileset   = new Dictionary<Int32, TexData>();
+        private static Dictionary<Int32, TexData>   Sprite    = new Dictionary<Int32, TexData>();
+        private static Vector2i                     OffSet;
         #endregion
 
         #region Methods
@@ -63,6 +64,9 @@ namespace Client.Rendering {
 
                 // Only render this if we're in-game.
                 if (Data.InGame) {
+                    // Calculate our screen Offset.
+                    Graphics.UpdateOffset();
+
                     // Render our lower layers.
                     Graphics.DrawMap(true);
 
@@ -194,11 +198,26 @@ namespace Client.Rendering {
             }
         }
         public static void DrawTile(TileData tile, Int32 x, Int32 y) {
-            var spr = new Sprite(Graphics.GetTileset(tile.Tileset));
+            var spr = new Sprite(Graphics.GetTileset(1));
             if (spr == null) return;
             spr.TextureRect = new IntRect(new Vector2i(tile.TileX * 32, tile.TileY * 32), new Vector2i(32, 32));
-            spr.Position = new Vector2f(x * 32, y * 32);
+            spr.Position = new Vector2f(Graphics.OffSet.X + (x * 32), Graphics.OffSet.Y + (y * 32));
             Screen.Draw(spr);
+        }
+        public static void UpdateOffset() {
+            Int32 x;
+            Int32 y;
+            if (Data.Map.SizeX * 32 < Data.Settings.Graphics.ResolutionX) {
+                x = (Data.Settings.Graphics.ResolutionX / 2) - ((Data.Map.SizeX * 32) / 2);
+            } else {
+                x = (Data.Players[Data.MyId].Characters[0].X * 32) / 2;
+            }
+            if (Data.Map.SizeY * 32 < Data.Settings.Graphics.ResolutionY) {
+                y = (Data.Settings.Graphics.ResolutionX / 2) - ((Data.Map.SizeX * 32) / 2);
+            } else {
+                y = (Data.Players[Data.MyId].Characters[0].Y * 32) / 2;
+            }
+            Graphics.OffSet = new Vector2i(x, y);
         }
         #endregion
     }
