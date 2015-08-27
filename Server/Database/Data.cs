@@ -174,23 +174,40 @@ namespace Server.Database {
             }
         }
         public static void SaveMap(Int32 id) {
-            var filename = String.Format("{0}data files\\maps\\{1}.xml", Data.AppPath, id);
+            var filename = String.Format("{0}data files\\maps\\{1}.dat", Data.AppPath, id);
 
-            // Make sure we don't try to save a non-existant class.
+            // Make sure we don't try to save a non-existant map.
             if (!Data.Map.ContainsKey(id)) return;
 
             // Delete a file should it already exist.
             if (File.Exists(filename)) File.Delete(filename);
 
-            // Serialize our object and throw it to a file!
-            var ser = new System.Xml.Serialization.XmlSerializer(new Map().GetType());
             using (var fs = File.OpenWrite(filename)) {
-                ser.Serialize(fs, Data.Map[id]);
+                using (var wr = new BinaryWriter(fs)) {
+                    wr.Write(Data.Map[id].Name);
+                    wr.Write(Data.Map[id].Music);
+                    wr.Write(Data.Map[id].Revision);
+                    wr.Write(Data.Map[id].SizeX);
+                    wr.Write(Data.Map[id].SizeY);
+
+                    wr.Write(Data.Map[id].Layers.Count);
+
+                    foreach (var l in Data.Map[id].Layers) {
+                        wr.Write(l.Name);
+                        wr.Write(l.BelowPlayer);
+                        for (var x = 0; x < Data.Map[id].SizeX; x++) {
+                            for (var y = 0; y < Data.Map[id].SizeY; y++) {
+                                wr.Write(l.Tiles[Data.Map[id].Translate(x, y)].Tileset);
+                                wr.Write(l.Tiles[l.Translate(x, y)].Tile);
+                            }
+                        }
+                    }
+                }
             }
             Logger.Write(String.Format("Saved Map {0}.", id));
         }
         public static void LoadMap(Int32 id) {
-            var filename = String.Format("{0}data files\\maps\\{1}.xml", Data.AppPath, id);
+            var filename = String.Format("{0}data files\\maps\\{1}.dat", Data.AppPath, id);
             // Make sure we created this class before moving on.
             if (!Data.Map.ContainsKey(id)) {
                 var c = new Map();
@@ -199,11 +216,35 @@ namespace Server.Database {
 
             // load our data.
             if (File.Exists(filename)) {
-                var ser = new System.Xml.Serialization.XmlSerializer(Data.Map[id].GetType());
+                // Destroy our existing list of layers.
+                Data.Map[id].Layers.Clear();
+
                 using (var fs = File.OpenRead(filename)) {
-                    Data.Map[id] = (Map)ser.Deserialize(fs);
+                    using (var re = new BinaryReader(fs)) {
+                        Data.Map[id].Name = re.ReadString();
+                        Data.Map[id].Music = re.ReadString();
+                        Data.Map[id].Revision = re.ReadInt32();
+                        Data.Map[id].SizeX = re.ReadInt32();
+                        Data.Map[id].SizeY = re.ReadInt32();
+
+                        var layers = re.ReadInt32();
+
+                        for (var l = 0; l < layers; l++) {
+                            Data.Map[id].Layers.Add(new LayerData(Data.Map[id].SizeX, Data.Map[id].SizeY));
+                            Data.Map[id].Layers[l].Name = re.ReadString();
+                            Data.Map[id].Layers[l].BelowPlayer = re.ReadBoolean();
+                            for (var x = 0; x < Data.Map[id].SizeX; x++) {
+                                for (var y = 0; y < Data.Map[id].SizeY; y++) {
+                                    Data.Map[id].Layers[l].Tiles[Data.Map[id].Translate(x, y)].Tileset = re.ReadInt32();
+                                    Data.Map[id].Layers[l].Tiles[Data.Map[id].Translate(x, y)].Tile = re.ReadInt32();
+                                }
+                            }
+                        }
+                    }
                 }
+
                 if (Data.Map[id].Name.Length > 0) Logger.Write(String.Format("Loaded Map: {0}", Data.Map[id].Name));
+
             } else {
                 Data.SaveMap(id);
             }

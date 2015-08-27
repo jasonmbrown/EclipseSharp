@@ -32,6 +32,5 @@ namespace Extensions {
             return BitConverter.ToString(sha.ComputeHash(Encoding.UTF8.GetBytes(input))).Replace("-", "");
         }
         #endregion
-
     }
 }
