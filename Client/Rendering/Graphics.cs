@@ -218,12 +218,12 @@ namespace Client.Rendering {
             if (Data.Map.SizeX * 32 < Data.Settings.Graphics.ResolutionX) {
                 x = (Data.Settings.Graphics.ResolutionX / 2) - ((Data.Map.SizeX * 32) / 2);
             } else {
-                x = (Data.Players[Data.MyId].X * 32) / 2;
+                x = (Data.Players[Data.MyId].X) / 2;
             }
             if (Data.Map.SizeY * 32 < Data.Settings.Graphics.ResolutionY) {
                 y = (Data.Settings.Graphics.ResolutionX / 2) - ((Data.Map.SizeX * 32) / 2);
             } else {
-                y = (Data.Players[Data.MyId].Y * 32) / 2;
+                y = (Data.Players[Data.MyId].Y) / 2;
             }
             Graphics.OffSet = new Vector2i(x, y);
         }
@@ -254,7 +254,7 @@ namespace Client.Rendering {
                 break;
             }
             sp.TextureRect = new IntRect(new Vector2i(0, yoffset), new Vector2i((Int32)sp.Texture.Size.X / 4, (Int32)sp.Texture.Size.Y / 4));
-            sp.Position = new Vector2f(x - ((Int32)sp.Texture.Size.X / 4) / 2, y - ((Int32)sp.Texture.Size.X / 4));
+            sp.Position = new Vector2f(Graphics.OffSet.X + (x - ((Int32)sp.Texture.Size.X / 4) / 2), Graphics.OffSet.Y + (y - ((Int32)sp.Texture.Size.X / 4)));
             Screen.Draw(sp);
         }
         public static void DrawPlayerNames() {
@@ -271,7 +271,7 @@ namespace Client.Rendering {
             var name = new Text(Data.Players[id].Name, Graphics.NameFont);
             name.CharacterSize = 12;
             name.Color = Color.Yellow;
-            name.Position = new Vector2f(x - (name.DisplayedString.Length * 3), y - (tex.Size.Y / 4));
+            name.Position = new Vector2f(Graphics.OffSet.X + (x - (name.DisplayedString.Length * 3)), Graphics.OffSet.Y + (y - (tex.Size.Y / 4)));
             Screen.Draw(name);
         }
         #endregion
