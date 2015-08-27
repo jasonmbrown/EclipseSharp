@@ -36,9 +36,11 @@ namespace Client.Networking {
         }
 
         internal static void HandleMapData(DataBuffer buffer) {
+            var id = buffer.ReadInt32();
             var temp = buffer.ReadBytes();
             using (var fs = new MemoryStream()) {
                 fs.Write(temp, 0, temp.Length);
+                fs.Position = 0;
                 using (var re = new BinaryReader(fs)) {
                     Data.Map.Name = re.ReadString();
                     Data.Map.Music = re.ReadString();
@@ -47,6 +49,7 @@ namespace Client.Networking {
                     Data.Map.SizeY = re.ReadInt32();
 
                     var layers = re.ReadInt32();
+                    Data.Map.Layers.Clear();
 
                     for (var l = 0; l < layers; l++) {
                         Data.Map.Layers.Add(new LayerData(Data.Map.SizeX, Data.Map.SizeY));
@@ -61,11 +64,13 @@ namespace Client.Networking {
                     }
                 }
             }
+            Data.SaveMap(id);
             Send.MapOK();
         }
 
         internal static void HandleInGame(DataBuffer obj) {
-            throw new NotImplementedException();
+            Interface.ChangeUI(Interface.Windows.Game);
+            Data.InGame = true;
         }
 
         internal static void HandleLoadMap(DataBuffer buffer) {
@@ -79,7 +84,7 @@ namespace Client.Networking {
             if (Data.Map.Revision == revision) {
                 Send.MapOK();
             } else {
-
+                Send.RequestMap();
             }
         }
 

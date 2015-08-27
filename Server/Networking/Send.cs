@@ -91,6 +91,7 @@ namespace Server.Networking {
         public static void MapData(Int32 id, Int32 map) {
             using (var buffer = new DataBuffer()) {
                 buffer.WriteInt32((Int32)Packets.Server.MapData);
+                buffer.WriteInt32(map);
                 buffer.WriteBytes(Data.MapCache[map]);
                 SendDataTo(id, buffer);
             }

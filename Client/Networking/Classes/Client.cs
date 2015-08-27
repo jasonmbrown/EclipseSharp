@@ -43,7 +43,9 @@ namespace Client.Networking {
             var b = new DataBuffer();
             b.WriteInt32(data.Length);
             b.Append(data);
-            this.MainSocket.BeginSend(b.ToArray(), 0, (Int32)b.Length(), SocketFlags.None, new AsyncCallback(DataSent), null);
+            try {
+                this.MainSocket.BeginSend(b.ToArray(), 0, (Int32)b.Length(), SocketFlags.None, new AsyncCallback(DataSent), null);
+            } catch { }
         }
         #endregion
 

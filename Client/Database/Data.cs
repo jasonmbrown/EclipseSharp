@@ -93,6 +93,36 @@ namespace Client.Database {
                 Data.Map.Revision = 0;
             }
         }
-            #endregion
+
+        public static void SaveMap(Int32 id) {
+            var filename = String.Format("{0}data files\\maps\\{1}.dat", Data.AppPath, id);
+
+            // Delete a file should it already exist.
+            if (File.Exists(filename)) File.Delete(filename);
+
+            using (var fs = File.OpenWrite(filename)) {
+                using (var wr = new BinaryWriter(fs)) {
+                    wr.Write(Data.Map.Name);
+                    wr.Write(Data.Map.Music);
+                    wr.Write(Data.Map.Revision);
+                    wr.Write(Data.Map.SizeX);
+                    wr.Write(Data.Map.SizeY);
+
+                    wr.Write(Data.Map.Layers.Count);
+
+                    foreach (var l in Data.Map.Layers) {
+                        wr.Write(l.Name);
+                        wr.Write(l.BelowPlayer);
+                        for (var x = 0; x < Data.Map.SizeX; x++) {
+                            for (var y = 0; y < Data.Map.SizeY; y++) {
+                                wr.Write(l.Tiles[x, y].Tileset);
+                                wr.Write(l.Tiles[x, y].Tile);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        #endregion
     }
 }
