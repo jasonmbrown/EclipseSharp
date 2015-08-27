@@ -34,30 +34,23 @@ namespace Extensions.Database {
             this.Layers.Add(l3);
         }
         #endregion
-
-        #region Methods
-        public Int32 Translate(Int32 x, Int32 y) {
-            return (x + 1) * (y + 1);
-        }
-        #endregion
-
     }
 
     public class LayerData {
         #region Declarations
         public String Name { get; set; }
         public Boolean BelowPlayer { get; set; }
-        public TileData[] Tiles = new TileData[0];
+        public TileData[,] Tiles = new TileData[0,0];
         #endregion
 
         #region Constructors
         public LayerData(Int32 sizex, Int32 sizey) {
             this.Name = String.Empty;
             this.BelowPlayer = true;
-            this.Tiles = new TileData[this.Translate(sizex, sizey)];
+            this.Tiles = new TileData[sizex, sizey];
             for (var x = 0; x < sizex; x++) {
                 for (var y = 0; y < sizey; y++) {
-                    this.Tiles[this.Translate(x, y)] = new TileData();
+                    this.Tiles[x, y] = new TileData();
                 }
             }
         }
