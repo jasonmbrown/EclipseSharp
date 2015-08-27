@@ -66,6 +66,7 @@ namespace Extensions.Database {
             this.Sprite         = new Int32();
             this.Level          = new Byte();
             this.Experience     = new Int32();
+            this.Map            = 1;
             this.X              = new Byte();
             this.Y              = new Byte();
             this.Direction      = new Byte();

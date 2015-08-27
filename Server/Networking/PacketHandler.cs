@@ -17,7 +17,9 @@ namespace Server.Networking {
             { Packets.Client.AddCharacter, HandleData.HandleAddCharacter },
             { Packets.Client.Logout, HandleData.HandleLogout },
             { Packets.Client.RequestNewCharacter, HandleData.HandleRequestNewCharacter },
-            { Packets.Client.UseCharacter, HandleData.HandleUseCharacter }
+            { Packets.Client.UseCharacter, HandleData.HandleUseCharacter },
+            { Packets.Client.RequestMap, HandleData.HandleRequestMap },
+            { Packets.Client.MapOK, HandleData.HandleMapOK }
         };
 
         public static void Handle(Int32 id, DataBuffer buffer) {

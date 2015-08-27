@@ -8,11 +8,13 @@ namespace Client.Database {
     public static class Data {
         #region Declarations
         //public static Dictionary<String, Object>    Temp       = new Dictionary<String, Object>();
-        public static Dictionary<Int32, Class>      Classes    = new Dictionary<Int32, Class>();
-        public static Dictionary<Int32, Player>     Players    = new Dictionary<Int32, Player>();
-        public static Settings                      Settings   = new Settings();
+        public static Map                           Map         = new Map();
+        public static Dictionary<Int32, Class>      Classes     = new Dictionary<Int32, Class>();
+        public static Dictionary<Int32, Player>     Players     = new Dictionary<Int32, Player>();
+        public static Settings                      Settings    = new Settings();
         public static String                        AppPath;
         public static Int32                         MyId;
+        public static Boolean                       InGame = false;
         #endregion
 
         #region Methods
@@ -21,6 +23,7 @@ namespace Client.Database {
             if (!Directory.Exists(Data.AppPath + "data files\\sprites")) Directory.CreateDirectory(Data.AppPath + "data files\\sprites");
             if (!Directory.Exists(Data.AppPath + "data files\\interface")) Directory.CreateDirectory(Data.AppPath + "data files\\interface");
             if (!Directory.Exists(Data.AppPath + "data files\\sounds")) Directory.CreateDirectory(Data.AppPath + "data files\\sounds");
+            if (!Directory.Exists(Data.AppPath + "data files\\maps")) Directory.CreateDirectory(Data.AppPath + "data files\\maps");
         }
         public static void LoadSettings() {
             var filename = String.Format("{0}data files\\settings.xml", Data.AppPath);
@@ -55,6 +58,41 @@ namespace Client.Database {
                 ser.Serialize(fs, Data.Settings);
             }
         }
-        #endregion
+        public static void LoadMap(Int32 id) {
+            var filename = String.Format("{0}data files\\maps\\{1}.dat", Data.AppPath, id);
+
+            // load our data.
+            if (File.Exists(filename)) {
+                // Destroy our existing list of layers.
+                Data.Map.Layers.Clear();
+
+                using (var fs = File.OpenRead(filename)) {
+                    using (var re = new BinaryReader(fs)) {
+                        Data.Map.Name = re.ReadString();
+                        Data.Map.Music = re.ReadString();
+                        Data.Map.Revision = re.ReadInt32();
+                        Data.Map.SizeX = re.ReadInt32();
+                        Data.Map.SizeY = re.ReadInt32();
+
+                        var layers = re.ReadInt32();
+
+                        for (var l = 0; l < layers; l++) {
+                            Data.Map.Layers.Add(new LayerData(Data.Map.SizeX, Data.Map.SizeY));
+                            Data.Map.Layers[l].Name = re.ReadString();
+                            Data.Map.Layers[l].BelowPlayer = re.ReadBoolean();
+                            for (var x = 0; x < Data.Map.SizeX; x++) {
+                                for (var y = 0; y < Data.Map.SizeY; y++) {
+                                    Data.Map.Layers[l].Tiles[x, y].Tileset = re.ReadInt32();
+                                    Data.Map.Layers[l].Tiles[x, y].Tile = re.ReadInt32();
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                Data.Map.Revision = 0;
+            }
+        }
+            #endregion
     }
 }

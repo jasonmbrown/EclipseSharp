@@ -80,6 +80,27 @@ namespace Server.Networking {
                 SendDataTo(id, buffer);
             }
         }
+        public static void LoadMap(Int32 id, Int32 map) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.LoadMap);
+                buffer.WriteInt32(map);
+                buffer.WriteInt32(Data.Map[map].Revision);
+                SendDataTo(id, buffer);
+            }
+        }
+        public static void MapData(Int32 id, Int32 map) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.MapData);
+                buffer.WriteBytes(Data.MapCache[map]);
+                SendDataTo(id, buffer);
+            }
+        }
+        public static void InGame(Int32 id) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.InGame);
+                SendDataTo(id, buffer);
+            }
+        }
         #endregion
     }
 }

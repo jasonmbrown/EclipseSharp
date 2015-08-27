@@ -15,7 +15,10 @@ namespace Client.Networking {
             { Packets.Server.PlayerId,              HandleData.HandlePlayerId },
             { Packets.Server.LoginOk,               HandleData.HandleLoginOk },
             { Packets.Server.NewCharacterData,      HandleData.HandleCreateCharacterData },
-            { Packets.Server.SelectCharacterData,   HandleData.HandleSelectCharacterData } 
+            { Packets.Server.SelectCharacterData,   HandleData.HandleSelectCharacterData },
+            { Packets.Server.LoadMap,               HandleData.HandleLoadMap },
+            { Packets.Server.MapData,               HandleData.HandleMapData },
+            { Packets.Server.InGame,                HandleData.HandleInGame }
         };
 
         public static void Handle(DataBuffer buffer) {

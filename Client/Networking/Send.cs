@@ -45,7 +45,7 @@ namespace Client.Networking {
         }
         public static void UseCharacter(Int32 slot) {
             using (var buffer = new DataBuffer()) {
-                buffer.WriteInt32((Int32)Packets.Client.AddCharacter);
+                buffer.WriteInt32((Int32)Packets.Client.UseCharacter);
                 buffer.WriteInt32(slot);
                 SendData(buffer);
             }
@@ -53,6 +53,18 @@ namespace Client.Networking {
         public static void RequestNewCharacter() {
             using (var buffer = new DataBuffer()) {
                 buffer.WriteInt32((Int32)Packets.Client.RequestNewCharacter);
+                SendData(buffer);
+            }
+        }
+        public static void MapOK() {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Client.MapOK);
+                SendData(buffer);
+            }
+        }
+        public static void RequestMap() {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Client.RequestMap);
                 SendData(buffer);
             }
         }

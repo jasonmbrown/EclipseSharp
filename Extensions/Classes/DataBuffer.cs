@@ -66,6 +66,11 @@ namespace Extensions.Networking {
                 this.WriteChar(c);
             }
         }
+        public void WriteBytes(Byte[] value) {
+            var l = value.Length;
+            this.WriteInt32(l);
+            this.Stream.Write(value, 0, l);
+        }
         public void WriteBoolean(Boolean value) {
             var data = BitConverter.GetBytes(value);
             this.Stream.Write(data, 0, 1);
@@ -116,6 +121,12 @@ namespace Extensions.Networking {
         }
         public DateTime ReadDateTime() {
             return DateTime.FromBinary(this.ReadInt64());
+        }
+        public Byte[] ReadBytes() {
+            var l = this.ReadInt32();
+            Byte[] data = new Byte[l];
+            this.Stream.Read(data, 0, l);
+            return data;
         }
         #endregion
     }

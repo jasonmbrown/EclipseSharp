@@ -7,6 +7,7 @@ using Extensions.Networking;
 using Client.Rendering;
 using Extensions.Database;
 using Client.Database;
+using System.IO;
 
 namespace Client.Networking {
     public static class HandleData {
@@ -32,6 +33,54 @@ namespace Client.Networking {
             Data.MyId = buffer.ReadInt32();
             var p = new Player();
             Data.Players.Add(Data.MyId, p);
+        }
+
+        internal static void HandleMapData(DataBuffer buffer) {
+            var temp = buffer.ReadBytes();
+            using (var fs = new MemoryStream()) {
+                fs.Write(temp, 0, temp.Length);
+                using (var re = new BinaryReader(fs)) {
+                    Data.Map.Name = re.ReadString();
+                    Data.Map.Music = re.ReadString();
+                    Data.Map.Revision = re.ReadInt32();
+                    Data.Map.SizeX = re.ReadInt32();
+                    Data.Map.SizeY = re.ReadInt32();
+
+                    var layers = re.ReadInt32();
+
+                    for (var l = 0; l < layers; l++) {
+                        Data.Map.Layers.Add(new LayerData(Data.Map.SizeX, Data.Map.SizeY));
+                        Data.Map.Layers[l].Name = re.ReadString();
+                        Data.Map.Layers[l].BelowPlayer = re.ReadBoolean();
+                        for (var x = 0; x < Data.Map.SizeX; x++) {
+                            for (var y = 0; y < Data.Map.SizeY; y++) {
+                                Data.Map.Layers[l].Tiles[x, y].Tileset = re.ReadInt32();
+                                Data.Map.Layers[l].Tiles[x, y].Tile = re.ReadInt32();
+                            }
+                        }
+                    }
+                }
+            }
+            Send.MapOK();
+        }
+
+        internal static void HandleInGame(DataBuffer obj) {
+            throw new NotImplementedException();
+        }
+
+        internal static void HandleLoadMap(DataBuffer buffer) {
+            var mapnum = buffer.ReadInt32();
+            var revision = buffer.ReadInt32();
+
+            // Load our map.
+            Data.LoadMap(mapnum);
+
+            // Compare revisions
+            if (Data.Map.Revision == revision) {
+                Send.MapOK();
+            } else {
+
+            }
         }
 
         internal static void HandleSelectCharacterData(DataBuffer buffer) {

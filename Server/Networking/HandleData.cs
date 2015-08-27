@@ -73,6 +73,17 @@ namespace Server.Networking {
 
         }
 
+        internal static void HandleMapOK(Int32 id, DataBuffer buffer) {
+            Data.TempPlayers[id].InGame = true;
+
+            Send.InGame(id);
+            Logger.Write(String.Format("ID: {0} has entered the world.", id));
+        }
+
+        internal static void HandleRequestMap(Int32 id, DataBuffer buffer) {
+            Send.MapData(id, Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map);
+        }
+
         internal static void HandleRequestNewCharacter(Int32 id, DataBuffer buffer) {
             Send.NewCharacterData(id);
         }
@@ -191,30 +202,24 @@ namespace Server.Networking {
             // If the user isn't already in-game, send them all the appropriate data!
             if (!Data.TempPlayers[id].InGame) {
 
+                // Player is using this character!
+                Data.TempPlayers[id].CurrentCharacter = slot;
+
                 // Send our client the go-ahead!
                 Send.LoginOK(id);
 
                 // Send our client our game data!
 
-                // Notify the Console.
-                Logger.Write(String.Format("ID: {0} has entered the world.", id));
+                // Now send our friendly friend our map!
+                Send.LoadMap(id, Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map);
             }
         }
         public static void HandleUseCharacter(Int32 id, DataBuffer buffer) {
             // Make sure the user exists.
             if (!Data.Players.ContainsKey(id)) return;
 
-            // If the user isn't already in-game, send them all the appropriate data!
-            if (!Data.TempPlayers[id].InGame) {
-
-                // Send our client the go-ahead!
-                Send.LoginOK(id);
-
-                // Send our client our game data!
-
-                // Notify the Console.
-                Logger.Write(String.Format("ID: {0} has entered the world.", id));
-            }
+            var slot = buffer.ReadInt32();
+            HandleData.HandleUseCharacter(id, slot);
         }
 
     }

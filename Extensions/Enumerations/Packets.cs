@@ -9,7 +9,9 @@ namespace Extensions {
             AddCharacter,
             Logout,
             RequestNewCharacter,
-            UseCharacter
+            UseCharacter,
+            MapOK,
+            RequestMap
         }
 
         public enum Server {
@@ -18,7 +20,10 @@ namespace Extensions {
             ErrorMsg,
             LoginOk,
             SelectCharacterData,
-            NewCharacterData
+            NewCharacterData,
+            LoadMap,
+            MapData,
+            InGame,
         }
 
     }
