@@ -20,7 +20,8 @@ namespace Client.Rendering {
             Register,
             CharacterSelect,
             CharacterCreate,
-            Game
+            Game,
+            MapEditor
         }
 
         public static   Gui                                                   GUI;
@@ -35,7 +36,8 @@ namespace Client.Rendering {
             { Windows.Register,         CreateRegisterMenu },
             { Windows.CharacterSelect,  CreateCharacterSelect },
             { Windows.CharacterCreate,  CreateCharacterCreate },
-            { Windows.Game,             CreateGame }
+            { Windows.Game,             CreateGame },
+            { Windows.MapEditor,        CreateMapEditor }
         };
 
         #endregion
@@ -411,6 +413,25 @@ namespace Client.Rendering {
             CurrentUI = Windows.Game;
             LastData.Clear();
             LastWindow = Windows.None;
+        }
+        private static void CreateMapEditor() {
+
+            var panel = GUI.Add(new Panel(), "panel");
+            panel.Size = new Vector2f(Data.Settings.Graphics.ResolutionX, 20);
+            panel.Position = new Vector2f(0, 0);
+
+            var tileselect = panel.Add(new ComboBox(Theme), "tileselect");
+            foreach (var t in Graphics.Tileset) {
+                tileselect.AddItem(String.Format("Tileset {0}", t.Key));
+            }
+            tileselect.SetSelectedItem(0);
+            tileselect.Size = new Vector2f(120, panel.Size.Y);
+
+            var tileset = GUI.Add(new ChildWindow(Theme), "tileset");
+            tileset.Title = "Tile Selection";
+            tileset.Size = new Vector2f(Graphics.GetTileset(1).Texture.Size.X, Data.Settings.Graphics.ResolutionY * 0.75f);
+
+            CurrentUI = Windows.MapEditor;
         }
         #endregion
     }

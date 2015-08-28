@@ -13,12 +13,16 @@ namespace Client.Logic {
         public static Boolean[] DirectionPressed = new Boolean[(Int32)Enumerations.Direction.Direction_Count];
 
         private static Boolean ChatVisible() {
-            return Interface.GUI.Get<EditBox>("chatinput").Visible;
+            if (Interface.CurrentUI == Interface.Windows.Game) {
+                return Interface.GUI.Get<EditBox>("chatinput").Visible;
+            } else {
+                return false;
+            }
         }
 
         public static void HandleChat() {
             if (ChatVisible()) {
-                Send.ChatMessage(Interface.GUI.Get<EditBox>("chatinput").Text);
+                Send.ChatMessage(Interface.GUI.Get<EditBox>("chatinput").Text.Trim());
                 Interface.GUI.Get<EditBox>("chatinput").Text = "";
                 Interface.GUI.Get<EditBox>("chatinput").Visible = false;
             } else {

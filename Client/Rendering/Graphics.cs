@@ -15,10 +15,10 @@ namespace Client.Rendering {
         #region Declarations
         private static RenderWindow Screen;
 
-        private static Dictionary<Int32, TexData>   Tileset   = new Dictionary<Int32, TexData>();
-        private static Dictionary<Int32, TexData>   Sprite    = new Dictionary<Int32, TexData>();
-        private static Vector2i                     OffSet;
-        private static Font                         NameFont;
+        public static   Dictionary<Int32, TexData>   Tileset   = new Dictionary<Int32, TexData>();
+        private static  Dictionary<Int32, TexData>   Sprite    = new Dictionary<Int32, TexData>();
+        private static  Vector2i                     OffSet;
+        private static  Font                         NameFont;
         #endregion
 
         #region Methods
@@ -81,6 +81,11 @@ namespace Client.Rendering {
                     // Render our upper layers.
                     Graphics.DrawMap(false);
 
+                    // If in the map editor, draw map outlines.
+                    if (Interface.CurrentUI == Interface.Windows.MapEditor) {
+                        Graphics.DrawMapEditorOutline();
+                    }
+
                     // Draw player names.
                     Graphics.DrawPlayerNames();
                 }
@@ -88,11 +93,53 @@ namespace Client.Rendering {
                 // Render the UI on top of everything!
                 Interface.Draw();
 
+                // If we're in the map editor, draw our map editor items on top of everything else!
+                if (Interface.CurrentUI == Interface.Windows.MapEditor) {
+                    Graphics.DrawMapEditorTileset();
+                }
+
                 // Handle all screen events and render changes.
                 Screen.DispatchEvents();
                 Screen.Display();
             }
         }
+
+        private static void DrawMapEditorOutline() {
+            var left = new RectangleShape();
+            left.FillColor = Color.Magenta;
+            left.Size = new Vector2f(1, Data.Map.SizeY * 32);
+            left.Position = new Vector2f(Graphics.OffSet.X, Graphics.OffSet.Y);
+            Screen.Draw(left);
+            var right = new RectangleShape();
+            right.FillColor = Color.Magenta;
+            right.Size = new Vector2f(1, Data.Map.SizeY * 32);
+            right.Position = new Vector2f(Graphics.OffSet.X + Data.Map.SizeX * 32, Graphics.OffSet.Y);
+            Screen.Draw(right);
+            var top = new RectangleShape();
+            top.FillColor = Color.Magenta;
+            top.Size = new Vector2f(Data.Map.SizeX *32, 1);
+            top.Position = new Vector2f(Graphics.OffSet.X, Graphics.OffSet.Y);
+            Screen.Draw(top);
+            var bottom = new RectangleShape();
+            bottom.FillColor = Color.Magenta;
+            bottom.Size = new Vector2f(Data.Map.SizeX * 32, 1);
+            bottom.Position = new Vector2f(Graphics.OffSet.X, Graphics.OffSet.Y + Data.Map.SizeY * 32);
+            Screen.Draw(bottom);
+        }
+
+        private static void DrawMapEditorTileset() {
+            var window = Interface.GUI.Get<TGUI.ChildWindow>("tileset");
+            var select = Interface.GUI.Get<TGUI.Panel>("panel").Get<TGUI.ComboBox>("tileselect");
+            var curset = select.GetSelectedItemIndex() + 1;
+            var spr = Graphics.GetTileset(curset);
+            var xoffset = window.Position.X + window.Borders.Left;
+            var yoffset = window.Position.Y + window.TitleBarHeight + window.Borders.Top;
+
+            spr.Position = new Vector2f(xoffset, yoffset);
+            spr.TextureRect = new IntRect(new Vector2i(0, 0), new Vector2i((Int32)spr.Texture.Size.X, (Int32)window.Size.Y - (Int32)window.Borders.Top));
+            Screen.Draw(spr);
+        }
+
         private static void RenderScreenOnce() {
             // Clear the screen of all data.
             Screen.Clear(Color.Green);
@@ -234,7 +281,7 @@ namespace Client.Rendering {
             Graphics.OffSet = new Vector2i(x, y);
         }
         public static void DrawPlayers() {
-            for (var y = 0; y < Data.Settings.Graphics.ResolutionY; y += 5) {
+            for (var y = 0; y < Data.Map.SizeY * 32; y += 5) {
                 for (var i = 0; i < Data.Players.Count; i++) {
                     var key = Data.Players.ElementAt(i).Key;
                     if (Data.Players[key].Map == Data.Players[Data.MyId].Map && Data.Players[key].Y >= y && Data.Players[key].Y < y + 5) {

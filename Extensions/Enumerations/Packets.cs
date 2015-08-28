@@ -30,7 +30,8 @@ namespace Extensions {
             PlayerLocation,
             PlayerData,
             RemovePlayer,
-            PlayerMoving
+            PlayerMoving,
+            MapEditorData
         }
 
     }

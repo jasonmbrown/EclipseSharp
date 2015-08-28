@@ -70,6 +70,10 @@ namespace Client.Networking {
             Send.MapOK();
         }
 
+        internal static void HandleMapEditorData(DataBuffer obj) {
+            Interface.ChangeUI(Interface.Windows.MapEditor);
+        }
+
         internal static void HandlePlayerMoving(DataBuffer buffer) {
             var id = buffer.ReadInt32();
             if (!Data.TempPlayers.ContainsKey(id)) return;

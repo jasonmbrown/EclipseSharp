@@ -41,8 +41,8 @@ namespace Server {
             Server.PacketHandler        += PacketHandler.Handle;
 
             // Create our logic handlers.
-            HandleMovement  = new Timer(new TimerCallback(Logic.Players.HandleMovement), null, 0, 10);
-            SyncPlayers     = new Timer(new TimerCallback(Logic.Players.SyncPlayers), null, 0, 500);
+            HandleMovement  = new Timer(new TimerCallback(Players.HandleMovement), null, 0, 10);
+            SyncPlayers     = new Timer(new TimerCallback(Players.SyncPlayers), null, 0, 500);
 
             // Open the server to players!
             Logger.Write("Opening server...");

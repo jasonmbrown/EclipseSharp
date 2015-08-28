@@ -117,6 +117,13 @@ namespace Server.Networking {
                 }
             }
         }
+        public static void ChatMessageError(Int32 id, String msg) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.ChatMessage);
+                buffer.WriteString(String.Format("ERROR : {1}", msg));
+                SendDataTo(id, buffer);
+            }
+        }
         public static void PlayerLocation(Int32 id, Int32 player) {
             using (var buffer = new DataBuffer()) {
                 buffer.WriteInt32((Int32)Packets.Server.PlayerLocation);
@@ -161,6 +168,12 @@ namespace Server.Networking {
                 for (var i = 0; i < (Int32)Enumerations.Direction.Direction_Count; i++) {
                      buffer.WriteBoolean(Data.TempPlayers[player].IsMoving[i]);
                 }
+                SendDataTo(id, buffer);
+            }
+        }
+        public static void MapEditorData(Int32 id) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.MapEditorData);
                 SendDataTo(id, buffer);
             }
         }

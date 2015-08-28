@@ -1,5 +1,4 @@
 ﻿using System;
-using Extensions;
 
 namespace Extensions.Database {
     public class Player {
@@ -9,6 +8,9 @@ namespace Extensions.Database {
         public  String  Username        { get; set; }
         public  String  Password        { get; set; }
         public  String  Salt            { get; set; }
+
+        // Admin
+        public Byte UserRank            { get; set; }
 
         // General
         public Character[] Characters { get; set; }
@@ -20,6 +22,7 @@ namespace Extensions.Database {
             this.Password       = String.Empty;
             this.Salt           = String.Empty;
             this.Characters     = new Character[3];
+            this.UserRank       = (Byte)Enumerations.Ranks.None;
             for (var i = 0; i < this.Characters.Length; i++) {
                 this.Characters[i] = new Character();
             }

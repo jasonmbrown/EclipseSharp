@@ -30,5 +30,11 @@ namespace Extensions {
             Right,
             Direction_Count
         }
+
+        public enum Ranks {
+            None,
+            Developer,
+            Administrator
+        }
     }
 }

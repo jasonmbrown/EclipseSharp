@@ -88,7 +88,23 @@ namespace Server.Networking {
 
         internal static void HandleChatMessage(Int32 id, DataBuffer buffer) {
             var msg = buffer.ReadString();
-            Send.ChatMessageMap(id, Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map, msg);
+            if (msg[0] == '/') {
+                var data = msg.ToLower().Split(' ');
+                switch (data[0]) {
+
+                    case "/editmap":
+                        if (Data.Players[id].UserRank >= (Byte)Enumerations.Ranks.Developer) {
+                            Send.MapEditorData(id);
+                        }
+                        break;
+                    default:
+                        Send.ChatMessageError(id, "Unknown command.");
+                    break;
+
+                }
+            } else {
+                Send.ChatMessageMap(id, Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map, msg);
+            }
         }
 
         internal static void HandleMapOK(Int32 id, DataBuffer buffer) {
