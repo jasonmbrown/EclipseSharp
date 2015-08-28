@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Server.Logic {
     public static class Players {
-        internal static void HandleMovement(object state) {
+        internal static void HandleMovement(Object state) {
             for (var i = 0; i < Data.TempPlayers.Count; i++) {
                 var key = Data.TempPlayers.ElementAt(i).Key;
                 if (Data.TempPlayers[key].InGame) {
@@ -30,7 +30,22 @@ namespace Server.Logic {
             }
         }
 
-        internal static void SyncPlayers(object state) {
+        internal static void SendMOTD(Object state) {
+            for (var i = 0; i < Data.Players.Count; i++) {
+                var id = Data.Players.ElementAt(i).Key;
+                if (!Data.TempPlayers[id].MOTD && Data.TempPlayers[id].InGame) {
+                    Send.ChatMessage(id, id, Data.Settings.MOTD, Enumerations.MessageType.System);
+                    Data.TempPlayers[id].MOTD = true;
+                }
+            }
+        }
+
+        internal static void SavePlayers(Object state) {
+            Logger.Write("Saving all players.");
+            Data.SavePlayers();
+        }
+
+        internal static void SyncPlayers(Object state) {
             // Send each player their own actual location and their location to everyone on their map.
             // This keeps them in-sync, even if they are lagging behind.
             for (var i = 0; i < Data.Players.Count; i++) {

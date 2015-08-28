@@ -22,7 +22,9 @@ namespace Client.Logic {
 
         public static void HandleChat() {
             if (ChatVisible()) {
-                Send.ChatMessage(Interface.GUI.Get<EditBox>("chatinput").Text.Trim());
+                var msg = Interface.GUI.Get<EditBox>("chatinput").Text.Trim();
+                if (msg.Length < 1) return;
+                Send.ChatMessage(msg);
                 Interface.GUI.Get<EditBox>("chatinput").Text = "";
                 Interface.GUI.Get<EditBox>("chatinput").Visible = false;
             } else {

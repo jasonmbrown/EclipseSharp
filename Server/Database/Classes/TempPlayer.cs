@@ -8,6 +8,7 @@ namespace Server.Database {
         public Boolean InGame           { get; set; }
         public Int32 CurrentCharacter   { get; set; }
         public Boolean[] IsMoving       = new Boolean[(Int32)Enumerations.Direction.Direction_Count];
+        public Boolean MOTD;
         #endregion
 
         #region Constructors

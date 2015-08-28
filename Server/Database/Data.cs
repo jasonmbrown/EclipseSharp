@@ -3,6 +3,7 @@ using Extensions.Database;
 using System.Collections.Generic;
 using System.IO;
 using Server.Logic;
+using System.Linq;
 
 namespace Server.Database {
     static class Data {
@@ -126,8 +127,9 @@ namespace Server.Database {
             }
         }
         public static void SavePlayers() {
-            foreach (var player in Data.Players) {
-                Data.SavePlayer(player.Key);
+            for (var i = 0; i < Data.Players.Count; i++) {
+                var id = Data.Players.ElementAt(i).Key;
+                if (Data.Players[id].Username.Length > 0) SavePlayer(id);
             }
         }
         public static void SavePlayer(Int32 id) {

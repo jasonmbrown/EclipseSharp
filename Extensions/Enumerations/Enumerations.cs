@@ -36,5 +36,13 @@ namespace Extensions {
             Developer,
             Administrator
         }
+
+        public enum MessageType {
+            Map,
+            World,
+            System,
+            Error,
+            Emote
+        }
     }
 }

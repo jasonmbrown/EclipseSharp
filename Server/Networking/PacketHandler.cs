@@ -60,6 +60,8 @@ namespace Server.Networking {
             // Remove our player from our system!
             Data.Players.Remove(id);
             Data.TempPlayers.Remove(id);
+
+            Logger.Write(String.Format("ID: {0} has disconnected.", id));
         }
 
     }

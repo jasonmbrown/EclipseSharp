@@ -120,9 +120,28 @@ namespace Client.Networking {
         }
 
         internal static void HandleChatMessage(DataBuffer buffer) {
+            var type = (Enumerations.MessageType)buffer.ReadByte();
             var msg = buffer.ReadString();
+            SFML.Graphics.Color color = new SFML.Graphics.Color(0, 0, 0);
             if (!Data.InGame) return;
-            Interface.GUI.Get<TGUI.ChatBox>("chat").AddLine(msg, SFML.Graphics.Color.Black);
+            switch (type) {
+                case Enumerations.MessageType.System:
+                    color = new SFML.Graphics.Color(100, 100, 49);
+                break;
+                case Enumerations.MessageType.Error:
+                    color = new SFML.Graphics.Color(255, 0, 0);
+                break;
+                case Enumerations.MessageType.World:
+                    color = new SFML.Graphics.Color(0, 195, 255);
+                break;
+                case Enumerations.MessageType.Map:
+                    color = new SFML.Graphics.Color(0, 0, 0);
+                break;
+                case Enumerations.MessageType.Emote:
+                    color = new SFML.Graphics.Color(255, 59, 0);
+                break;
+            }
+            Interface.GUI.Get<TGUI.ChatBox>("chat").AddLine(msg, color);
         }
 
         internal static void HandleInGame(DataBuffer obj) {

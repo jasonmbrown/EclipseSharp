@@ -96,14 +96,21 @@ namespace Server.Networking {
                         if (Data.Players[id].UserRank >= (Byte)Enumerations.Ranks.Developer) {
                             Send.MapEditorData(id);
                         }
-                        break;
+                    break;
+                    case "/w":
+                        Send.ChatMessageWorld(id, msg.Substring(2), Enumerations.MessageType.World);
+                    break;
+                    case "/me":
+                    case "/em":
+                        Send.ChatMessageMap(id, Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map, msg.Substring(3), Enumerations.MessageType.Emote);
+                    break;
                     default:
-                        Send.ChatMessageError(id, "Unknown command.");
+                        Send.ChatMessage(id, id, "Unknown command.", Enumerations.MessageType.Error);
                     break;
 
                 }
             } else {
-                Send.ChatMessageMap(id, Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map, msg);
+                Send.ChatMessageMap(id, Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map, msg, Enumerations.MessageType.Map);
             }
         }
 
@@ -111,7 +118,7 @@ namespace Server.Networking {
             Data.TempPlayers[id].InGame = true;
 
             Send.InGame(id);
-            Logger.Write(String.Format("ID: {0} has entered the world.", id));
+            Logger.Write(String.Format("ID: {0} has entered the world.", id));            
         }
 
         internal static void HandleRequestMap(Int32 id, DataBuffer buffer) {

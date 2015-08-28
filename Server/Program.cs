@@ -11,6 +11,8 @@ namespace Server {
         public static   Boolean             Running             = true;
         private static  Timer               HandleMovement;
         private static  Timer               SyncPlayers;
+        private static  Timer               MOTD;
+        private static  Timer               SavePlayers;
 
         static void Main(string[] args) {
 
@@ -43,6 +45,8 @@ namespace Server {
             // Create our logic handlers.
             HandleMovement  = new Timer(new TimerCallback(Players.HandleMovement), null, 0, 10);
             SyncPlayers     = new Timer(new TimerCallback(Players.SyncPlayers), null, 0, 500);
+            MOTD            = new Timer(new TimerCallback(Players.SendMOTD), null, 0, 1000);    // The excuse for this is that with the way the client loads and the sockets being a seperate thread an MOTD at MapOK does not always arrive after the UI loaded, but sometimes before. Eep.
+            SavePlayers     = new Timer(new TimerCallback(Players.SavePlayers), null, 0, 300000);
 
             // Open the server to players!
             Logger.Write("Opening server...");

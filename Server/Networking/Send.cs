@@ -103,24 +103,45 @@ namespace Server.Networking {
                 SendDataTo(id, buffer);
             }
         }
-        public static void ChatMessageMap(Int32 sender, Int32 map, String msg) {
-            using(var buffer = new DataBuffer()) {
-                buffer.WriteInt32((Int32)Packets.Server.ChatMessage);
-                buffer.WriteString(String.Format("[{0}]: {1}", Data.Players[sender].Characters[Data.TempPlayers[sender].CurrentCharacter].Name, msg));
+        public static void ChatMessageWorld(Int32 sender, String msg, Enumerations.MessageType type) {
+            for (var i = 0; i < Data.Players.Count; i++) {
+                if (Data.Players.ContainsKey(Data.Players.ElementAt(i).Key)) {
+                    var key = Data.Players.ElementAt(i).Key;
+                    if (Data.TempPlayers[key].InGame) ChatMessage(key, sender, msg, type);
+                }
+            }
+        }
+        public static void ChatMessageMap(Int32 sender, Int32 map, String msg, Enumerations.MessageType type) {
                 for (var i = 0; i < Data.Players.Count; i++) {
                     if (Data.Players.ContainsKey(Data.Players.ElementAt(i).Key)) {
                         var key = Data.Players.ElementAt(i).Key;
                         if (Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Map == map && Data.TempPlayers[key].InGame) {
-                            SendDataTo(key, buffer);
+                            ChatMessage(key, sender, msg, type);
                         }
                     }
                 }
-            }
         }
-        public static void ChatMessageError(Int32 id, String msg) {
+        public static void ChatMessage(Int32 id, Int32 sender, String msg, Enumerations.MessageType type) {
             using (var buffer = new DataBuffer()) {
                 buffer.WriteInt32((Int32)Packets.Server.ChatMessage);
-                buffer.WriteString(String.Format("ERROR : {1}", msg));
+                buffer.WriteByte((Byte)type);
+                switch (type) {
+                    case Enumerations.MessageType.System:
+                        buffer.WriteString(String.Format("<SYSTEM> {0}", msg));
+                    break;
+                    case Enumerations.MessageType.Error:
+                        buffer.WriteString(String.Format("<ERROR> {0}", msg));
+                    break;
+                    case Enumerations.MessageType.World:
+                        buffer.WriteString(String.Format("[W] {0}: {1}", Data.Players[sender].Characters[Data.TempPlayers[sender].CurrentCharacter].Name, msg));
+                    break;
+                    case Enumerations.MessageType.Map:
+                        buffer.WriteString(String.Format("[S] {0}: {1}", Data.Players[sender].Characters[Data.TempPlayers[sender].CurrentCharacter].Name, msg));
+                    break;
+                    case Enumerations.MessageType.Emote:
+                        buffer.WriteString(String.Format("{0} {1}", Data.Players[sender].Characters[Data.TempPlayers[sender].CurrentCharacter].Name, msg));
+                    break;
+                }
                 SendDataTo(id, buffer);
             }
         }
