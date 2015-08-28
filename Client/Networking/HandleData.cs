@@ -72,6 +72,7 @@ namespace Client.Networking {
 
         internal static void HandlePlayerMoving(DataBuffer buffer) {
             var id = buffer.ReadInt32();
+            if (!Data.TempPlayers.ContainsKey(id)) return;
             for (var i = 0; i < (Int32)Enumerations.Direction.Direction_Count; i++) {
                 Data.TempPlayers[id].IsMoving[i] = buffer.ReadBoolean();
             }
