@@ -234,10 +234,12 @@ namespace Client.Rendering {
             Graphics.OffSet = new Vector2i(x, y);
         }
         public static void DrawPlayers() {
-            for (var i = 0; i < Data.Players.Count; i++) {
-                var key = Data.Players.ElementAt(i).Key;
-                if (Data.Players[key].Map == Data.Players[Data.MyId].Map) {
-                    Graphics.DrawSprite(Data.Players[key].Sprite, (Enumerations.Direction)Data.Players[key].Direction, Data.TempPlayers[key].Frame, Data.Players[key].X, Data.Players[key].Y);
+            for (var y = 0; y < Data.Settings.Graphics.ResolutionY; y += 5) {
+                for (var i = 0; i < Data.Players.Count; i++) {
+                    var key = Data.Players.ElementAt(i).Key;
+                    if (Data.Players[key].Map == Data.Players[Data.MyId].Map && Data.Players[key].Y >= y && Data.Players[key].Y < y + 5) {
+                        Graphics.DrawSprite(Data.Players[key].Sprite, (Enumerations.Direction)Data.Players[key].Direction, Data.TempPlayers[key].Frame, Data.Players[key].X, Data.Players[key].Y);
+                    }
                 }
             }
         }
