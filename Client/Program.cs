@@ -13,6 +13,7 @@ namespace Client {
 
         private static ManualResetEvent KeepAlive = new ManualResetEvent(false);
         private static Timer            HandleMovement;
+        private static Timer            CheckSpriteFrames;
         #endregion
 
         #region Methods
@@ -47,6 +48,7 @@ namespace Client {
 
             // Set up our timers with Logic handlers.
             HandleMovement = new Timer(new TimerCallback(Logic.Input.HandleMovement), null, 0, 10);
+            CheckSpriteFrames = new Timer(new TimerCallback(Graphics.CheckSpriteFrames), null, 0, 250);
 
             // Stops the program from closing until a signal is received.
             KeepAlive.WaitOne();

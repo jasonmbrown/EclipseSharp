@@ -234,6 +234,7 @@ namespace Server.Networking {
                     if (Data.TempPlayers[key].InGame && Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Map == Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map) {
                         Send.PlayerData(key, id);
                         Send.PlayerData(id, key);
+                        Send.PlayerMoving(id, key);
                     }
                 }
 

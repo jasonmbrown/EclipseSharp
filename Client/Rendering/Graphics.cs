@@ -235,7 +235,7 @@ namespace Client.Rendering {
             for (var i = 0; i < Data.Players.Count; i++) {
                 var key = Data.Players.ElementAt(i).Key;
                 if (Data.Players[key].Map == Data.Players[Data.MyId].Map) {
-                    Graphics.DrawSprite(Data.Players[key].Sprite, (Enumerations.Direction)Data.Players[key].Direction, 0, Data.Players[key].X, Data.Players[key].Y);
+                    Graphics.DrawSprite(Data.Players[key].Sprite, (Enumerations.Direction)Data.Players[key].Direction, Data.TempPlayers[key].Frame, Data.Players[key].X, Data.Players[key].Y);
                 }
             }
         }
@@ -243,6 +243,7 @@ namespace Client.Rendering {
             var sp = new Sprite(Graphics.GetSprite(spr));
             if (sp.Texture == null) return;
             Int32 yoffset = 0;
+            Int32 xoffset = (Int32)(sp.Texture.Size.X / 4) * frame;
             switch (dir) {
                 case Enumerations.Direction.Up:
                     yoffset = (Int32)(sp.Texture.Size.Y / 4) * 3;
@@ -257,7 +258,7 @@ namespace Client.Rendering {
                 yoffset = (Int32)(sp.Texture.Size.Y / 4);
                 break;
             }
-            sp.TextureRect = new IntRect(new Vector2i(0, yoffset), new Vector2i((Int32)sp.Texture.Size.X / 4, (Int32)sp.Texture.Size.Y / 4));
+            sp.TextureRect = new IntRect(new Vector2i(xoffset, yoffset), new Vector2i((Int32)sp.Texture.Size.X / 4, (Int32)sp.Texture.Size.Y / 4));
             sp.Position = new Vector2f(Graphics.OffSet.X + (x - ((Int32)sp.Texture.Size.X / 4) / 2), Graphics.OffSet.Y + (y - ((Int32)sp.Texture.Size.X / 4)));
             Screen.Draw(sp);
         }
@@ -277,6 +278,21 @@ namespace Client.Rendering {
             name.Color = Color.Yellow;
             name.Position = new Vector2f(Graphics.OffSet.X + (x - (name.DisplayedString.Length * 3)), Graphics.OffSet.Y + (y - (tex.Size.Y / 4)));
             Screen.Draw(name);
+        }
+        public static void CheckSpriteFrames(Object e) {
+            // Player Sprites
+            for (var i = 0; i < Data.TempPlayers.Count; i++) {
+                var key = Data.TempPlayers.ElementAt(i).Key;
+                if (Data.TempPlayers[key].IsMoving[(Int32)Enumerations.Direction.Up] ||
+                    Data.TempPlayers[key].IsMoving[(Int32)Enumerations.Direction.Down] ||
+                    Data.TempPlayers[key].IsMoving[(Int32)Enumerations.Direction.Left] ||
+                    Data.TempPlayers[key].IsMoving[(Int32)Enumerations.Direction.Right]) {
+                    Data.TempPlayers[key].Frame += 1;
+                    if (Data.TempPlayers[key].Frame > 3) Data.TempPlayers[key].Frame = 0; ;
+                } else {
+                    Data.TempPlayers[key].Frame = 0;
+                }
+            }
         }
         #endregion
     }

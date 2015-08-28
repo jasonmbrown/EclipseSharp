@@ -81,19 +81,19 @@ namespace Client.Logic {
                 var key = Data.TempPlayers.ElementAt(i).Key;
                 if (Data.TempPlayers[key].IsMoving[(Int32)Enumerations.Direction.Up]) {
                     Data.Players[key].Direction = (Int32)Enumerations.Direction.Up;
-                    Data.Players[key].Y -= 1;
+                    if (Data.Players[key].Y > 0) Data.Players[key].Y -= 1;
                 }
                 if (Data.TempPlayers[key].IsMoving[(Int32)Enumerations.Direction.Down]) {
                     Data.Players[key].Direction = (Int32)Enumerations.Direction.Down;
-                    Data.Players[key].Y += 1;
+                    if (Data.Players[key].Y < Data.Map.SizeY * 32) Data.Players[key].Y += 1;
                 }
                 if (Data.TempPlayers[key].IsMoving[(Int32)Enumerations.Direction.Left]) {
                     Data.Players[key].Direction = (Int32)Enumerations.Direction.Left;
-                    Data.Players[key].X -= 1;
+                    if (Data.Players[key].X > 0) Data.Players[key].X -= 1;
                 }
                 if (Data.TempPlayers[key].IsMoving[(Int32)Enumerations.Direction.Right]) {
                     Data.Players[key].Direction = (Int32)Enumerations.Direction.Right;
-                    Data.Players[key].X += 1;
+                    if (Data.Players[key].X < Data.Map.SizeX * 32) Data.Players[key].X += 1;
                 }
             }
         }
