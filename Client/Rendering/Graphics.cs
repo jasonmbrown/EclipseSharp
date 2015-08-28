@@ -161,12 +161,13 @@ namespace Client.Rendering {
             if (!Graphics.Tileset.ContainsKey(id)) return false;
 
             // Is it loaded already? If not load it, otherwise return true and update the time.
-            if (Tileset[id].Data != null) {
+            if (Tileset[id].Texture != null && Tileset[id].Sprite != null) {
                 Tileset[id].LastUse = DateTime.UtcNow;
                 return true;
             } else {
                 using (var fs = File.OpenRead(Tileset[id].File)) {
-                    Tileset[id].Data = new Texture(fs);
+                    Tileset[id].Texture = new Texture(fs);
+                    Tileset[id].Sprite  = new Sprite(Tileset[id].Texture);
                     Tileset[id].LastUse = DateTime.UtcNow;
                     return true;
                 }
@@ -177,26 +178,27 @@ namespace Client.Rendering {
             if (!Graphics.Sprite.ContainsKey(id)) return false;
 
             // Is it loaded already? If not load it, otherwise return true and update the time.
-            if (Sprite[id].Data != null) {
+            if (Sprite[id].Texture != null && Sprite[id].Sprite != null) {
                 Sprite[id].LastUse = DateTime.UtcNow;
                 return true;
             } else {
                 using (var fs = File.OpenRead(Sprite[id].File)) {
-                    Sprite[id].Data = new Texture(fs);
-                    Sprite[id].LastUse = DateTime.UtcNow;
+                    Sprite[id].Texture  = new Texture(fs);
+                    Sprite[id].Sprite   = new Sprite(Sprite[id].Texture);
+                    Sprite[id].LastUse  = DateTime.UtcNow;
                     return true;
                 }
             }
         }
-        public static Texture GetSprite(Int32 id) {
+        public static Sprite GetSprite(Int32 id) {
             if (!Graphics.Sprite.ContainsKey(id)) return null;
             Graphics.LoadSprite(id);
-            return Graphics.Sprite[id].Data;
+            return Graphics.Sprite[id].Sprite;
         }
-        public static Texture GetTileset(Int32 id) {
+        public static Sprite GetTileset(Int32 id) {
             if (!Graphics.Tileset.ContainsKey(id)) return null;
             Graphics.LoadTileset(id);
-            return Graphics.Tileset[id].Data;
+            return Graphics.Tileset[id].Sprite;
         }
         public static void DrawMap(Boolean belowplayer) {
             foreach (var layer in Data.Map.Layers) {
@@ -210,7 +212,7 @@ namespace Client.Rendering {
             }
         }
         public static void DrawTile(TileData tile, Int32 x, Int32 y) {
-            var spr = new Sprite(Graphics.GetTileset(tile.Tileset));
+            var spr = Graphics.GetTileset(tile.Tileset);
             if (spr == null) return;
             spr.TextureRect = new IntRect(new Vector2i(tile.TileX * 32, tile.TileY * 32), new Vector2i(32, 32));
             spr.Position = new Vector2f(Graphics.OffSet.X + (x * 32), Graphics.OffSet.Y + (y * 32));
@@ -222,12 +224,12 @@ namespace Client.Rendering {
             if (Data.Map.SizeX * 32 < Data.Settings.Graphics.ResolutionX) {
                 x = (Data.Settings.Graphics.ResolutionX / 2) - ((Data.Map.SizeX * 32) / 2);
             } else {
-                x = (Data.Settings.Graphics.ResolutionX / 2) - ((Data.Players[Data.MyId].X + (((Int32)Graphics.GetSprite(Data.Players[Data.MyId].Sprite).Size.X / 4) / 2)));
+                x = (Data.Settings.Graphics.ResolutionX / 2) - ((Data.Players[Data.MyId].X + (((Int32)Graphics.GetSprite(Data.Players[Data.MyId].Sprite).Texture.Size.X / 4) / 2)));
             }
             if (Data.Map.SizeY * 32 < Data.Settings.Graphics.ResolutionY) {
                 y = (Data.Settings.Graphics.ResolutionY / 2) - ((Data.Map.SizeY * 32) / 2);
             } else {
-                y = (Data.Settings.Graphics.ResolutionY / 2) - ((Data.Players[Data.MyId].Y) + (((Int32)Graphics.GetSprite(Data.Players[Data.MyId].Sprite).Size.Y / 4)));
+                y = (Data.Settings.Graphics.ResolutionY / 2) - ((Data.Players[Data.MyId].Y) + (((Int32)Graphics.GetSprite(Data.Players[Data.MyId].Sprite).Texture.Size.Y / 4)));
             }
             Graphics.OffSet = new Vector2i(x, y);
         }
@@ -240,7 +242,7 @@ namespace Client.Rendering {
             }
         }
         public static void DrawSprite(Int32 spr, Enumerations.Direction dir, Int32 frame, Int32 x, Int32 y) {
-            var sp = new Sprite(Graphics.GetSprite(spr));
+            var sp = Graphics.GetSprite(spr);
             if (sp.Texture == null) return;
             Int32 yoffset = 0;
             Int32 xoffset = (Int32)(sp.Texture.Size.X / 4) * frame;
@@ -276,7 +278,7 @@ namespace Client.Rendering {
             var name = new Text(Data.Players[id].Name, Graphics.NameFont);
             name.CharacterSize = 12;
             name.Color = Color.Yellow;
-            name.Position = new Vector2f(Graphics.OffSet.X + (x - (name.DisplayedString.Length * 3)), Graphics.OffSet.Y + (y - (tex.Size.Y / 4)));
+            name.Position = new Vector2f(Graphics.OffSet.X + (x - (name.DisplayedString.Length * 3)), Graphics.OffSet.Y + (y - (tex.Texture.Size.Y / 4)));
             Screen.Draw(name);
         }
         public static void CheckSpriteFrames(Object e) {
@@ -300,14 +302,16 @@ namespace Client.Rendering {
         #region Declarations
         public String File         { get; set; }
         public DateTime LastUse    { get; set; }
-        public Texture Data        { get; set; }
+        public Texture Texture     { get; set; }
+        public Sprite Sprite       { get; set; }
         #endregion
 
         #region Constructors
         public TexData() {
             this.File       = String.Empty;
             this.LastUse    = DateTime.MinValue;
-            this.Data       = null;
+            this.Texture    = null;
+            this.Sprite     = null;
         }
         #endregion
     }

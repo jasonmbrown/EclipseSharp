@@ -103,7 +103,8 @@ namespace Server.Networking {
 
             // TODO: Notify Client that the server is full.
             if (id == 0) throw new NotImplementedException();
-            var client = new Socket(SocketType.Stream, ProtocolType.Tcp);
+            IPAddress ip; IPAddress.TryParse("0.0.0.0", out ip); 
+            var client = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
             try {
                 client = socket.EndAccept(ar);
             } catch { }
