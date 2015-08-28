@@ -90,6 +90,7 @@
     <Compile Include="Database\Classes\TempPlayer.cs" />
     <Compile Include="Logic\Input.cs" />
     <Compile Include="Logic\Logger.cs" />
+    <Compile Include="Logic\Players.cs" />
     <Compile Include="Networking\HandleData.cs" />
     <Compile Include="Networking\PacketHandler.cs" />
     <Compile Include="Networking\Send.cs" />

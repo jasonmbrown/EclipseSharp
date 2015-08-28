@@ -3,20 +3,21 @@ using System.Linq;
 using Extensions;
 using System.Collections.Generic;
 using Server.Database;
-using Server.Networking;
 
 namespace Server.Logic {
     public static class Input {
 
         private static Dictionary<String, Action<Object[]>> Commands = new Dictionary<String, Action<Object[]>>() {
             { "close",  Shutdown}, { "exit",  Shutdown}, { "shutdown",  Shutdown},
-            { "help", Help }
+            { "help", Help },
+            { "list", List }
         };
         private static Dictionary<String, String> HelpList = new Dictionary<String, String>() {
             { "close", "Shuts down the server and saves all currently loaded information to disk." },
             { "exit", "Shuts down the server and saves all currently loaded information to disk." },
             { "shutdown", "Shuts down the server and saves all currently loaded information to disk." },
             { "help", "Provides help for every command available in this program.\n- Use 'help' to get a list of available commands.\n- Use 'help command' to get more detailed information about a command." },
+            { "list", "Lists all currently available entries loaded into the server for the specified item.\n- Use list 'type' to get a list of all available items of that type.\n- Available types include: players, maps" }
         };
 
         public static void Process(String input) {
@@ -39,46 +40,18 @@ namespace Server.Logic {
             Program.Running = false;
         }
 
-        internal static void HandleMovement(object state) {
-            for (var i = 0; i < Data.TempPlayers.Count; i++) {
-                var key = Data.TempPlayers.ElementAt(i).Key;
-                if (Data.TempPlayers[key].InGame) {
-                    if (Data.TempPlayers[key].IsMoving[(Int32)Enumerations.Direction.Up]) {
-                        Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Direction = (Int32)Enumerations.Direction.Up;
-                        if (Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Y > 0) Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Y -= 1;
-                    }
-                    if (Data.TempPlayers[key].IsMoving[(Int32)Enumerations.Direction.Down]) {
-                        Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Direction = (Int32)Enumerations.Direction.Down;
-                        if (Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Y < Data.Map[Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Map].SizeY * 32) Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Y += 1;
-                    }
-                    if (Data.TempPlayers[key].IsMoving[(Int32)Enumerations.Direction.Left]) {
-                        Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Direction = (Int32)Enumerations.Direction.Left;
-                        if (Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].X > 0) Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].X -= 1;
-                    }
-                    if (Data.TempPlayers[key].IsMoving[(Int32)Enumerations.Direction.Right]) {
-                        Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Direction = (Int32)Enumerations.Direction.Right;
-                        if (Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].X < Data.Map[Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Map].SizeX * 32) Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].X += 1;
-                    }
+        private static void List(Object[] args) {
+            if (args.Length > 0) {
+                switch (((String)args[0]).ToLower()) {
+                    case "players":
+                        Logger.Write((from p in Data.Players select p.Value.Username).Aggregate((a, b) => a + ", " + b));
+                    break;
+                    case "maps":
+                        Logger.Write((from p in Data.Map select p.Value.Name).Aggregate((a, b) => a + ", " + b));
+                    break;
                 }
-            }
-        }
-
-        internal static void SyncPlayers(object state) {
-            // Send each player their own actual location and their location to everyone on their map.
-            // This keeps them in-sync, even if they are lagging behind.
-            for (var i = 0; i < Data.Players.Count; i++) {
-                var id = Data.Players.ElementAt(i).Key;
-                if (Data.TempPlayers[id].InGame) {
-                    Send.PlayerLocation(id, id);
-                    for (var n = 0; n < Data.Players.Count; n++) {
-                        var player = Data.Players.ElementAt(n).Key;
-                        if (Data.TempPlayers[player].InGame) {
-                            if (Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map == Data.Players[player].Characters[Data.TempPlayers[player].CurrentCharacter].Map) {
-                                Send.PlayerLocation(player, id);
-                            }
-                        }
-                    }
-                }
+            } else {
+                Logger.Write("Unknown list.");
             }
         }
 
