@@ -222,12 +222,12 @@ namespace Client.Rendering {
             if (Data.Map.SizeX * 32 < Data.Settings.Graphics.ResolutionX) {
                 x = (Data.Settings.Graphics.ResolutionX / 2) - ((Data.Map.SizeX * 32) / 2);
             } else {
-                x = (Data.Players[Data.MyId].X) / 2;
+                x = (Data.Settings.Graphics.ResolutionX / 2) - ((Data.Players[Data.MyId].X + (((Int32)Graphics.GetSprite(Data.Players[Data.MyId].Sprite).Size.X / 4) / 2)));
             }
             if (Data.Map.SizeY * 32 < Data.Settings.Graphics.ResolutionY) {
-                y = (Data.Settings.Graphics.ResolutionX / 2) - ((Data.Map.SizeX * 32) / 2);
+                y = (Data.Settings.Graphics.ResolutionY / 2) - ((Data.Map.SizeY * 32) / 2);
             } else {
-                y = (Data.Players[Data.MyId].Y) / 2;
+                y = (Data.Settings.Graphics.ResolutionY / 2) - ((Data.Players[Data.MyId].Y) + (((Int32)Graphics.GetSprite(Data.Players[Data.MyId].Sprite).Size.Y / 4)));
             }
             Graphics.OffSet = new Vector2i(x, y);
         }
