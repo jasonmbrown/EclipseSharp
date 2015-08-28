@@ -12,6 +12,7 @@ namespace Client {
         public static Networking.Client NetworkClient;
 
         private static ManualResetEvent KeepAlive = new ManualResetEvent(false);
+        private static Timer            HandleMovement;
         #endregion
 
         #region Methods
@@ -45,7 +46,7 @@ namespace Client {
             NetworkClient.Open(Data.Settings.Network.IPAddress, Data.Settings.Network.Port);
 
             // Set up our timers with Logic handlers.
-            
+            HandleMovement = new Timer(new TimerCallback(Logic.Input.HandleMovement), null, 0, 10);
 
             // Stops the program from closing until a signal is received.
             KeepAlive.WaitOne();

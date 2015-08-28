@@ -22,7 +22,8 @@ namespace Client.Networking {
             { Packets.Server.ChatMessage,           HandleData.HandleChatMessage },
             { Packets.Server.PlayerLocation,        HandleData.HandlePlayerLocation },
             { Packets.Server.PlayerData,            HandleData.HandlePlayerData },
-            { Packets.Server.RemovePlayer,          HandleData.HandleRemovePlayer }
+            { Packets.Server.RemovePlayer,          HandleData.HandleRemovePlayer },
+            { Packets.Server.PlayerMoving,          HandleData.HandlePlayerMoving }
         };
 
         public static void Handle(DataBuffer buffer) {

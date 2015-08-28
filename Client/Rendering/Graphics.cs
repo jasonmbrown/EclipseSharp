@@ -33,6 +33,7 @@ namespace Client.Rendering {
             Screen                      = new RenderWindow(new VideoMode((uint)width, (uint)height), title, fullscreen == true ? Styles.Fullscreen : Styles.Titlebar | Styles.Close);
             Screen.Closed               += new EventHandler(WindowClosed);
             Screen.KeyPressed           += new EventHandler<KeyEventArgs>(WindowKeyPressed);
+            Screen.KeyReleased          += new EventHandler<KeyEventArgs>(WindowKeyReleased);
             Screen.MouseButtonPressed   += new EventHandler<MouseButtonEventArgs>(WindowMousePressed);
             Screen.MouseMoved           += new EventHandler<MouseMoveEventArgs>(WindowMouseMoved);
             Screen.SetFramerateLimit(60);
@@ -110,7 +111,10 @@ namespace Client.Rendering {
             
         }
         private static void WindowKeyPressed(object sender, KeyEventArgs e) {
-            Logic.UIHandlers.WindowKeyPressed(e);
+            Logic.Input.WindowKeyPressed(e);
+        }
+        private static void WindowKeyReleased(object sender, KeyEventArgs e) {
+            Logic.Input.WindowKeyReleased(e);
         }
         private static void WindowClosed(object sender, EventArgs e) {
             // Destroy all graphical elements!.

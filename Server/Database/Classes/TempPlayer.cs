@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Extensions;
+using System;
 
 
 namespace Server.Database {
@@ -6,6 +7,7 @@ namespace Server.Database {
         #region Declarations
         public Boolean InGame           { get; set; }
         public Int32 CurrentCharacter   { get; set; }
+        public Boolean[] IsMoving       = new Boolean[(Int32)Enumerations.Direction.Direction_Count];
         #endregion
 
         #region Constructors

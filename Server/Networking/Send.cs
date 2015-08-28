@@ -154,6 +154,16 @@ namespace Server.Networking {
                 SendDataTo(id, buffer);
             }
         }
+        public static void PlayerMoving(Int32 id, Int32 player) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.PlayerMoving);
+                buffer.WriteInt32(player);
+                for (var i = 0; i < (Int32)Enumerations.Direction.Direction_Count; i++) {
+                     buffer.WriteBoolean(Data.TempPlayers[player].IsMoving[i]);
+                }
+                SendDataTo(id, buffer);
+            }
+        }
         #endregion
     }
 }

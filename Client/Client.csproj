@@ -102,7 +102,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Database\Classes\Settings.cs" />
+    <Compile Include="Database\Classes\TempPlayer.cs" />
     <Compile Include="Database\Data.cs" />
+    <Compile Include="Logic\Input.cs" />
     <Compile Include="Logic\UIHandlers.cs" />
     <Compile Include="Networking\Classes\Client.cs" />
     <Compile Include="Networking\HandleData.cs" />

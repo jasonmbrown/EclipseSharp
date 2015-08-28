@@ -75,5 +75,14 @@ namespace Client.Networking {
                 SendData(buffer);
             }
         }
+        public static void PlayerMoving() {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Client.PlayerMoving);
+                for (var i = 0; i < (Int32)Enumerations.Direction.Direction_Count; i++) {
+                    buffer.WriteBoolean(Logic.Input.DirectionPressed[i]);
+                }
+                SendData(buffer);
+            }
+        }
     }
 }

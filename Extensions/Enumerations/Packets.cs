@@ -12,7 +12,8 @@ namespace Extensions {
             UseCharacter,
             MapOK,
             RequestMap,
-            ChatMessage
+            ChatMessage,
+            PlayerMoving
         }
 
         public enum Server {
@@ -28,7 +29,8 @@ namespace Extensions {
             ChatMessage,
             PlayerLocation,
             PlayerData,
-            RemovePlayer
+            RemovePlayer,
+            PlayerMoving
         }
 
     }

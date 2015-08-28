@@ -74,6 +74,18 @@ namespace Server.Networking {
 
         }
 
+        internal static void HandlePlayerMoving(Int32 id, DataBuffer buffer) {
+            for (var i = 0; i < (Int32)Enumerations.Direction.Direction_Count; i++) {
+                Data.TempPlayers[id].IsMoving[i] = buffer.ReadBoolean();
+            }
+            for (var i = 0; i < Data.Players.Keys.Count; i++) {
+                var key = Data.Players.ElementAt(i).Key;
+                if (Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map == Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Map) {
+                    Send.PlayerMoving(key, id);
+                }
+            }
+        }
+
         internal static void HandleChatMessage(Int32 id, DataBuffer buffer) {
             var msg = buffer.ReadString();
             Send.ChatMessageMap(id, Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map, msg);
@@ -221,6 +233,7 @@ namespace Server.Networking {
                     var key = Data.Players.ElementAt(i).Key;
                     if (Data.TempPlayers[key].InGame && Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Map == Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map) {
                         Send.PlayerData(key, id);
+                        Send.PlayerData(id, key);
                     }
                 }
 

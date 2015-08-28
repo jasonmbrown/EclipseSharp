@@ -21,7 +21,8 @@ namespace Server.Networking {
             { Packets.Client.UseCharacter, HandleData.HandleUseCharacter },
             { Packets.Client.RequestMap, HandleData.HandleRequestMap },
             { Packets.Client.MapOK, HandleData.HandleMapOK },
-            { Packets.Client.ChatMessage, HandleData.HandleChatMessage }
+            { Packets.Client.ChatMessage, HandleData.HandleChatMessage },
+            { Packets.Client.PlayerMoving, HandleData.HandlePlayerMoving }
         };
 
         public static void Handle(Int32 id, DataBuffer buffer) {

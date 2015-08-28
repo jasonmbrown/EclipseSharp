@@ -32,8 +32,8 @@ namespace Client.Networking {
 
         internal static void HandlePlayerId(DataBuffer buffer) {
             Data.MyId = buffer.ReadInt32();
-            var p = new Character();
-            Data.Players.Add(Data.MyId, p);
+            Data.Players.Add(Data.MyId, new Character());
+            Data.TempPlayers.Add(Data.MyId, new TempPlayer());
         }
 
         internal static void HandleMapData(DataBuffer buffer) {
@@ -70,6 +70,13 @@ namespace Client.Networking {
             Send.MapOK();
         }
 
+        internal static void HandlePlayerMoving(DataBuffer buffer) {
+            var id = buffer.ReadInt32();
+            for (var i = 0; i < (Int32)Enumerations.Direction.Direction_Count; i++) {
+                Data.TempPlayers[id].IsMoving[i] = buffer.ReadBoolean();
+            }
+        }
+
         internal static void HandleRemovePlayer(DataBuffer buffer) {
             var id = buffer.ReadInt32();
             if (!Data.Players.ContainsKey(id)) return;
@@ -78,7 +85,10 @@ namespace Client.Networking {
 
         internal static void HandlePlayerData(DataBuffer buffer) {
             var id = buffer.ReadInt32();
-            if (!Data.Players.ContainsKey(id)) Data.Players.Add(id, new Character());
+            if (!Data.Players.ContainsKey(id)) {
+                Data.Players.Add(id, new Character());
+                Data.TempPlayers.Add(id, new TempPlayer());
+            }
 
             Data.Players[id].Name = buffer.ReadString();
             Data.Players[id].Gender = buffer.ReadByte();

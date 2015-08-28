@@ -11,6 +11,7 @@ namespace Client.Database {
         public static Map                           Map         = new Map();
         public static Dictionary<Int32, Class>      Classes     = new Dictionary<Int32, Class>();
         public static Dictionary<Int32, Character>  Players     = new Dictionary<Int32, Character>();
+        public static Dictionary<Int32, TempPlayer> TempPlayers = new Dictionary<Int32, TempPlayer>();
         public static Character[]                   CharSelect  = new Character[3];
         public static Settings                      Settings    = new Settings();
         public static String                        AppPath;

@@ -94,22 +94,6 @@ namespace Client.Logic {
             }
         }
 
-        internal static void WindowKeyPressed(KeyEventArgs e) {
-            if (!Data.InGame) return;
-            switch (e.Code) {
-                case Keyboard.Key.Return:
-                    if (Interface.GUI.Get<EditBox>("chatinput").Visible) {
-                        Send.ChatMessage(Interface.GUI.Get<EditBox>("chatinput").Text);
-                        Interface.GUI.Get<EditBox>("chatinput").Text = "";
-                        Interface.GUI.Get<EditBox>("chatinput").Visible = false;
-                    } else {
-                        Interface.GUI.Get<EditBox>("chatinput").Visible = true;
-                        Interface.GUI.Get<EditBox>("chatinput").Focused = true;
-                    }
-                    break;
-            }
-        }
-
         internal static void Alertbox_OKClick(object sender, CallbackArgs e) {
             // Close our screen, and thus our program!
             Graphics.CloseScreen();
