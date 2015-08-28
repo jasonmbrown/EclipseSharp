@@ -40,15 +40,17 @@ namespace Client {
 
             // Set up our Network stuff.
             NetworkClient = new Networking.Client();
-            NetworkClient.ConnectedHandler += PacketHandler.ClientConnected;
-            NetworkClient.PacketHandler += PacketHandler.Handle;
+            NetworkClient.ConnectedHandler  += PacketHandler.ClientConnected;
+            NetworkClient.PacketHandler     += PacketHandler.Handle;
 
             // Open our connection!
             NetworkClient.Open(Data.Settings.Network.IPAddress, Data.Settings.Network.Port);
 
             // Set up our timers with Logic handlers.
-            HandleMovement = new Timer(new TimerCallback(Logic.Input.HandleMovement), null, 0, 10);
-            CheckSpriteFrames = new Timer(new TimerCallback(Graphics.CheckSpriteFrames), null, 0, 250);
+            // These little engines will be the lifeblood of the client. Anything that is not handled by UI or input from the server
+            // will be done or correctd by these.
+            HandleMovement      = new Timer(new TimerCallback(Logic.Input.HandleMovement), null, 0, 10);
+            CheckSpriteFrames   = new Timer(new TimerCallback(Graphics.CheckSpriteFrames), null, 0, 250);
 
             // Stops the program from closing until a signal is received.
             KeepAlive.WaitOne();

@@ -2,12 +2,15 @@
 using Server.Database;
 using Server.Networking;
 using Server.Logic;
+using System.Threading;
 
 namespace Server {
     static class Program {
 
-        public static Networking.Server Server;
-        public static Boolean Running = true;
+        public static   Networking.Server   Server;
+        public static   Boolean             Running             = true;
+        private static  Timer               HandleMovement;
+        private static  Timer               SyncPlayers;
 
         static void Main(string[] args) {
 
@@ -36,6 +39,10 @@ namespace Server {
             Server.ConnectHandler       += PacketHandler.ClientConnected;
             Server.DisconnectHandler    += PacketHandler.ClientDisconnected;
             Server.PacketHandler        += PacketHandler.Handle;
+
+            // Create our logic handlers.
+            HandleMovement  = new Timer(new TimerCallback(Logic.Input.HandleMovement), null, 0, 10);
+            SyncPlayers     = new Timer(new TimerCallback(Logic.Input.SyncPlayers), null, 0, 500);
 
             // Open the server to players!
             Logger.Write("Opening server...");
