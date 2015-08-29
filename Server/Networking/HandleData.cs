@@ -38,24 +38,26 @@ namespace Server.Networking {
             }
 
             // Send our OK.
-            Logger.Write(String.Format("ID: {0} has logged in.", id));
+            Logger.Write(String.Format("ID: {0} has logged in as {1}", id, Data.Players[id].Username));
             Send.LoginOK(id);
 
             // Disconnect anyone else logged into this account.
             var oldclient = 0;
-            for (var i = 0; i < Data.Settings.MaxPlayers; i++) {        // We can't foreach on the player dictionary, the list is prone to change.
-                if (Data.Players.ContainsKey(i)) {
-                    if (Data.Players[i].Username.ToLower().Equals(username.ToLower()) && i != id) {
-                        oldclient = i;
+            for (var i = 0; i < Data.Players.Count; i++) {
+                var key = Data.Players.ElementAt(i).Key;
+                    if (Data.Players[key].Username.ToLower().Equals(username.ToLower()) && key != id) {
+                        oldclient = key;
                     }
-                }
             }
             if (oldclient != 0) {
                 Send.AlertMessage(oldclient, "Someone else has logged onto your account!");
+                Logger.Write(String.Format("ID: {0} conflicts with a login at ID: {1}, Disconnecting ID: {1}", id, oldclient));
                 Data.SavePlayer(oldclient);
                 // NOTE: the user is still logged on until they get this message, we're saving their data on purpose.
                 // Their data will now be saved twice, but we can safely load it.
                 Data.LoadPlayer(id, username.ToLower());
+                // Now remove the old player from the world by force.
+                Program.Server.DisconnectClient(oldclient);
             }
 
             // Check if they have at least one character.
@@ -118,7 +120,7 @@ namespace Server.Networking {
             Data.TempPlayers[id].InGame = true;
 
             Send.InGame(id);
-            Logger.Write(String.Format("ID: {0} has entered the world.", id));            
+            Logger.Write(String.Format("ID: {0} has entered the world as '{1}'.", id, Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Name));            
         }
 
         internal static void HandleRequestMap(Int32 id, DataBuffer buffer) {
@@ -165,7 +167,7 @@ namespace Server.Networking {
 
             // Save the player!
             Data.SavePlayer(id);
-            Logger.Write(String.Format("ID: {0} has created a new account.", id));
+            Logger.Write(String.Format("ID: {0} has created a new account named '{1}'.", id, username));
 
             // Send them our OK!
             Send.LoginOK(id);
@@ -233,7 +235,7 @@ namespace Server.Networking {
             Data.SavePlayer(id);
 
             // Notify our user!
-            Logger.Write(String.Format("ID: {0} has created a character.", id));
+            Logger.Write(String.Format("ID: {0} has created a character named '{1}'.", id, name));
             HandleData.HandleUseCharacter(id, slot);
         }
         public static void HandleUseCharacter(Int32 id, Int32 slot) {

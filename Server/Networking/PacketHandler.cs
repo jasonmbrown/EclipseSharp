@@ -41,9 +41,12 @@ namespace Server.Networking {
 
             // Send the ID to our player.
             Send.PlayerID(id);
+
+            Logger.Write(String.Format("ID: {0} has connected.", id));
         }
 
         public static void ClientDisconnected(Int32 id) {
+
             // Save our player data
             if (Data.Players[id].Username.Length > 0) {
                 Data.SavePlayer(id);
@@ -56,6 +59,8 @@ namespace Server.Networking {
                     Send.RemovePlayer(key, id);
                 }
             }
+
+            if (Data.TempPlayers[id].CurrentCharacter != -1) Logger.Write(String.Format("ID: {0} has left the world as '{1}'.", id, Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Name));
 
             // Remove our player from our system!
             Data.Players.Remove(id);
