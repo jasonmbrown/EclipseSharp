@@ -92,8 +92,9 @@ namespace Server.Networking {
             } catch (SocketException) { }
         }
         public void SendDataToAll(Byte[] data) {
-            foreach (var client in Clients) {
-                this.SendDataTo(client.Key, data);
+            for (var i = 0; i < Clients.Count; i++) {
+                var key = Clients.ElementAt(i).Key;
+                this.SendDataTo(key, data);
             }
         }
         public void DisconnectClient(Int32 id) {

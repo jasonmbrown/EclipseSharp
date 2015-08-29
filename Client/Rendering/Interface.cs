@@ -52,15 +52,19 @@ namespace Client.Rendering {
         public static void ClearGUI() {
             // Remove all current Widgets.
             CurrentUI = Windows.None;
-            if (GUI != null) GUI.RemoveAllWidgets();
+            try {
+                if (GUI != null) GUI.RemoveAllWidgets();
+            } catch { }
         }
         public static void ChangeUI(Windows newui) {
-            // If this UI isn't used right now, 
-            if (newui != CurrentUI) {
-                // Clear the old UI, and load the new one!
-                ClearGUI();
-                Interfaces.TryGet(newui, () => { CurrentUI = Windows.None; })();
-            }
+            // If this UI isn't used right now, load it!
+            try {
+                if (newui != CurrentUI) {
+                    // Clear the old UI, and load the new one!
+                    ClearGUI();
+                    Interfaces.TryGet(newui, () => { CurrentUI = Windows.None; })();
+                }
+            } catch { }
         }
         public static void Draw() {
             // Draw the UI!
