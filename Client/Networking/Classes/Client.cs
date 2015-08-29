@@ -88,6 +88,7 @@ namespace Client.Networking {
                             buffer.FromArray(state.Data.ToArray().Skip(4).Take(length).ToArray());
                             var data = state.Data.ToArray().Skip(4 + length).Take(state.Received - (4 + length)).ToArray();
                             state.Data.FromArray(data);
+                            state.Buffer = data;
                             this.PacketHandler(buffer);
                         } else {
                             var newstate = new StateObject();
