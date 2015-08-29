@@ -89,7 +89,7 @@ namespace Server.Networking {
                 b.WriteInt32(data.Length);
                 b.Append(data);
                 Clients[id].BeginSend(b.ToArray(), 0, (Int32)b.Length(), SocketFlags.None, new AsyncCallback(DataSent), Clients[id]);
-            } catch (SocketException) { }
+            } catch { }
         }
         public void SendDataToAll(Byte[] data) {
             for (var i = 0; i < Clients.Count; i++) {

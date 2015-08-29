@@ -201,7 +201,7 @@ namespace Server.Networking {
                 buffer.WriteInt32((Int32)Packets.Server.PlayerMoving);
                 buffer.WriteInt32(player);
                 for (var i = 0; i < (Int32)Enumerations.Direction.Direction_Count; i++) {
-                    buffer.WriteBoolean(Data.TempPlayers[player].IsMoving[i]);
+                    if (Data.TempPlayers.ContainsKey(player)) buffer.WriteBoolean(Data.TempPlayers[player].IsMoving[i]);
                 }
                 SendDataTo(id, buffer);
             }
