@@ -52,7 +52,7 @@ namespace Client.Rendering {
         public static void ClearGUI() {
             // Remove all current Widgets.
             CurrentUI = Windows.None;
-            GUI.RemoveAllWidgets();
+            if (GUI != null) GUI.RemoveAllWidgets();
         }
         public static void ChangeUI(Windows newui) {
             // If this UI isn't used right now, 

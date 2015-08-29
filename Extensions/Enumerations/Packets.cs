@@ -4,6 +4,7 @@ namespace Extensions {
     public static class Packets {
 
         public enum Client {
+            Ping,
             NewAccount,
             Login,
             AddCharacter,
@@ -17,6 +18,7 @@ namespace Extensions {
         }
 
         public enum Server {
+            Ping,
             PlayerId,
             AlertMsg,
             ErrorMsg,

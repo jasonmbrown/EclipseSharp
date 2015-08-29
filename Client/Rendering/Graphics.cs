@@ -8,6 +8,7 @@ using Client.Database;
 using Extensions.Database;
 using Extensions;
 using System.Linq;
+using System.Threading;
 
 namespace Client.Rendering {
     static class Graphics {
@@ -17,6 +18,7 @@ namespace Client.Rendering {
 
         public static   Dictionary<Int32, TexData>   Tileset   = new Dictionary<Int32, TexData>();
         private static  Dictionary<Int32, TexData>   Sprite    = new Dictionary<Int32, TexData>();
+        public static   ManualResetEvent             Loaded    = new ManualResetEvent(false);
         private static  Vector2i                     OffSet;
         private static  Font                         NameFont;
         #endregion
@@ -47,14 +49,15 @@ namespace Client.Rendering {
             Graphics.RenderScreenOnce();
 
             // Initialize our Graphics.
-            Interface.GUI.Get<TGUI.Panel>("loadpanel").Get<TGUI.Label>("loadtext").Text = "Initializing Graphics...";
+            Interface.GUI.Get<TGUI.Panel>("loadpanel").Get<TGUI.Label>("loadtext").Text = "Initializing Grahics...";
             Graphics.RenderScreenOnce();
             Graphics.NameFont = new Font(String.Format("{0}data files\\interface\\names.ttf", Data.AppPath));
             Graphics.InitSprites();
             Graphics.InitTilesets();
 
-            // Done loading! Start the real menu.
-            Interface.ChangeUI(Interface.Windows.MainMenu);
+            Interface.GUI.Get<TGUI.Panel>("loadpanel").Get<TGUI.Label>("loadtext").Text = "Connecting...";
+
+            Loaded.Set();
 
             // Move on to rendering the window.
             Graphics.RenderScreen();

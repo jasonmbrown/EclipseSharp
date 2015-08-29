@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Client.Networking {
     public class Client : IDisposable {
@@ -10,8 +11,11 @@ namespace Client.Networking {
         #region Declarations
         private Socket MainSocket;
 
-        public Action<Boolean> ConnectedHandler;
-        public Action<DataBuffer> PacketHandler;
+        public Action<Boolean>      ConnectedHandler;
+        public Action<DataBuffer>   PacketHandler;
+        public Action               DisconnectedHandler;
+        private DateTime            LastData;
+        private Timer               ConnectionCheck;
         #endregion
 
         #region Constructors
@@ -48,6 +52,10 @@ namespace Client.Networking {
                 this.MainSocket.BeginSend(b.ToArray(), 0, (Int32)b.Length(), SocketFlags.None, new AsyncCallback(DataSent), null);
             } catch { }
         }
+        private void FlushClient() {
+                if (this.MainSocket.Connected) this.MainSocket.Disconnect(false);
+                this.MainSocket.Close();
+        }
         #endregion
 
         #region Events
@@ -60,15 +68,20 @@ namespace Client.Networking {
             }
             var state = new StateObject();
             this.MainSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
+            this.LastData = DateTime.UtcNow;
             this.ConnectedHandler(true);
+            this.ConnectionCheck = new Timer(new TimerCallback(CheckConnection), null, 0, 2000);
+            
         }
         private void ReceiveData(IAsyncResult ar) {
             var state = (StateObject)ar.AsyncState;
             var receive = 0;
 
+            this.LastData = DateTime.UtcNow;
+
             try {
                 receive = this.MainSocket.EndReceive(ar);
-            } catch (SocketException) { }
+            } catch { }
 
             if (receive > 0) {
                 state.Data.Append(state.Buffer);
@@ -102,6 +115,14 @@ namespace Client.Networking {
 
             }
         }
+        private void CheckConnection(Object e) {
+                // Check if the server hasn't been sending data to us.
+                if ((DateTime.UtcNow - this.LastData).TotalSeconds > 10) {
+                    this.FlushClient();
+                    this.DisconnectedHandler();
+                }
+            }
+
         private void DataSent(IAsyncResult ar) {
             this.MainSocket.EndSend(ar);
         }

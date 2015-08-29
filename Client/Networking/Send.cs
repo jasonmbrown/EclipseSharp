@@ -9,6 +9,13 @@ namespace Client.Networking {
             Program.NetworkClient.SendData(data.ToArray());
         }
 
+        public static void Ping() {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Client.Ping);
+                SendData(buffer);
+            }
+        }
+
         public static void NewAccount(String username, String Password) {
             using (var buffer = new DataBuffer()) {
                 buffer.WriteInt32((Int32)Packets.Client.NewAccount);

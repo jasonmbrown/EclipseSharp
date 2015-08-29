@@ -11,12 +11,18 @@ namespace Server.Networking {
         private static void SendDataTo(Int32 id, DataBuffer buffer) {
             Program.Server.SendDataTo(id, buffer.ToArray());
         }
-        private static void SendDataToAll(Int32 id, DataBuffer buffer) {
+        private static void SendDataToAll(DataBuffer buffer) {
             Program.Server.SendDataToAll(buffer.ToArray());
         }
         #endregion
 
         #region Game Data
+        public static void Ping() {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.Ping);
+                SendDataToAll(buffer);
+            }
+        }
         public static void AlertMessage(Int32 id, String message) {
             // Write our alert into a buffer and send it along.
             using (var buffer = new DataBuffer()) {

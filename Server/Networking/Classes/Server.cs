@@ -11,7 +11,8 @@ namespace Server.Networking {
 
         #region Declarations
         private Socket MainSocket;
-        private Dictionary<Int32, Socket> Clients = new Dictionary<Int32, Socket>();
+        private Dictionary<Int32, Socket>   Clients     = new Dictionary<Int32, Socket>();
+        private Dictionary<Int32, DateTime> LastData    = new Dictionary<Int32, DateTime>();
         private Int32 MaxClients;
         private Timer ConnectionCheck;
 
@@ -74,6 +75,7 @@ namespace Server.Networking {
                 if (Clients[id].Connected) Clients[id].Disconnect(false);
                 Clients[id].Close();
                 Clients.Remove(id);
+                LastData.Remove(id);
             }
         }
         private void FlushClients() {
@@ -94,6 +96,11 @@ namespace Server.Networking {
                 this.SendDataTo(client.Key, data);
             }
         }
+        public void DisconnectClient(Int32 id) {
+            if (!this.Clients.ContainsKey(id)) return;
+            this.FlushClient(id);
+            this.DisconnectHandler(id);
+        }
         #endregion
 
         #region Events
@@ -111,6 +118,7 @@ namespace Server.Networking {
             client.NoDelay = false;
 
             this.Clients.Add(id, client);
+            this.LastData.Add(id, DateTime.UtcNow);
 
             this.ConnectHandler(id);
 
@@ -128,6 +136,8 @@ namespace Server.Networking {
             var state = (StateObject)ar.AsyncState;
 
             if (!Clients.ContainsKey(state.Id)) return;
+
+            LastData[state.Id] = DateTime.UtcNow;
 
             Int32 receive = 0;
             try {
@@ -159,34 +169,35 @@ namespace Server.Networking {
                             newstate.Id = state.Id;
                             newstate.Connection = state.Connection;
                             newstate.Data = new DataBuffer();
-                            state.Connection.BeginReceive(newstate.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), newstate);
+                            try {
+                                state.Connection.BeginReceive(newstate.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), newstate);
+                            } catch { }
                             work = false;
                         }
                     }
                 } else {
-                    state.Connection.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
+                    try {
+                        state.Connection.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
+                    } catch { }
                 }
             }
         }
         private void CheckConnections(Object e) {
-            var list = new List<Int32>();
+            for (var i = 0; i < this.Clients.Count; i++) {
+                var id = Clients.ElementAt(i).Key;
 
-            foreach (var client in Clients) {
-                try {
-                    client.Value.BeginSend(new Byte[0], 0, 0, SocketFlags.None, new AsyncCallback(DataSent), client.Value);
-                } catch { }
-                if (((!client.Value.Poll(1, SelectMode.SelectWrite) && client.Value.Available == 0) || !client.Value.Connected)) {
-                    list.Add(client.Key);
+                // Check if the client hasn't been sending data to us.
+                if ((DateTime.UtcNow - this.LastData[id]).TotalSeconds > 10) {
+                    this.FlushClient(id);
+                    this.DisconnectHandler(id);
                 }
-            }
-            foreach (var l in list) {
-                this.FlushClient(l);
-                this.DisconnectHandler(l);
             }
         }
         private void DataSent(IAsyncResult ar) {
-            var client = (Socket)ar.AsyncState;
-            client.EndSend(ar);
+            try {
+                var client = (Socket)ar.AsyncState;
+                client.EndSend(ar);
+            } catch { }
         }
         #endregion
     }

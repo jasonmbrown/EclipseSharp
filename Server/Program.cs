@@ -13,6 +13,7 @@ namespace Server {
         private static  Timer               SyncPlayers;
         private static  Timer               MOTD;
         private static  Timer               SavePlayers;
+        private static  Timer               PingClients;
 
         static void Main(string[] args) {
 
@@ -43,6 +44,7 @@ namespace Server {
             Server.PacketHandler        += PacketHandler.Handle;
 
             // Create our logic handlers.
+            PingClients     = new Timer(new TimerCallback(PacketHandler.PingClients), null, 0, 2000);
             HandleMovement  = new Timer(new TimerCallback(Players.HandleMovement), null, 0, 10);
             SyncPlayers     = new Timer(new TimerCallback(Players.SyncPlayers), null, 0, 500);
             MOTD            = new Timer(new TimerCallback(Players.SendMOTD), null, 0, 1000);    // The excuse for this is that with the way the client loads and the sockets being a seperate thread an MOTD at MapOK does not always arrive after the UI loaded, but sometimes before. Eep.

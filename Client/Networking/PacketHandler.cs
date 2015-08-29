@@ -10,6 +10,7 @@ namespace Client.Networking {
         // Set up our dictionary that'll contain the link between our enum and our actual methods.
         // It's a fairly simple system, enum in method out.
         private static Dictionary<Packets.Server, Action<DataBuffer>> Handlers = new Dictionary<Packets.Server, Action<DataBuffer>>() {
+            { Packets.Server.Ping,                  (b)=> { /* No actual data to process here, sorry! */ } },
             { Packets.Server.AlertMsg,              HandleData.HandleAlertMessage },
             { Packets.Server.ErrorMsg,              HandleData.HandleErrorMessage },
             { Packets.Server.PlayerId,              HandleData.HandlePlayerId },
@@ -35,8 +36,19 @@ namespace Client.Networking {
         public static void ClientConnected(Boolean success) {
             if (!success) {
                 Interface.ShowAlertbox("Error", "Unable to connect to server.\nTry again later.");
+            } else {
+                // Wait for the UI and Graphics to load before we try and change it.
+                Graphics.Loaded.WaitOne();
+                Interface.ChangeUI(Interface.Windows.MainMenu);
             }
         }
 
+        internal static void PingServer(object state) {
+            Send.Ping();
+        }
+
+        public static void ClientDisconnected() {
+            Interface.ShowAlertbox("Error", "Connection to the server has been lost.\nPlease check your network connection and try again.");
+        }
     }
 }

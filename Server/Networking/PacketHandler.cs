@@ -13,16 +13,17 @@ namespace Server.Networking {
         // Set up our dictionary that'll contain the link between our enum and our actual methods.
         // It's a fairly simple system, enum in method out.
         private static  Dictionary<Packets.Client, Action<Int32, DataBuffer>> Handlers = new Dictionary<Packets.Client, Action<Int32, DataBuffer>>() {
-            { Packets.Client.Login, HandleData.HandleLogin },
-            { Packets.Client.NewAccount, HandleData.HandleNewAccount },
-            { Packets.Client.AddCharacter, HandleData.HandleAddCharacter },
-            { Packets.Client.Logout, HandleData.HandleLogout },
-            { Packets.Client.RequestNewCharacter, HandleData.HandleRequestNewCharacter },
-            { Packets.Client.UseCharacter, HandleData.HandleUseCharacter },
-            { Packets.Client.RequestMap, HandleData.HandleRequestMap },
-            { Packets.Client.MapOK, HandleData.HandleMapOK },
-            { Packets.Client.ChatMessage, HandleData.HandleChatMessage },
-            { Packets.Client.PlayerMoving, HandleData.HandlePlayerMoving }
+            { Packets.Client.Ping,                  (i, b)=> { /* No actual data to process here, sorry! */ } },
+            { Packets.Client.Login,                 HandleData.HandleLogin },
+            { Packets.Client.NewAccount,            HandleData.HandleNewAccount },
+            { Packets.Client.AddCharacter,          HandleData.HandleAddCharacter },
+            { Packets.Client.Logout,                HandleData.HandleLogout },
+            { Packets.Client.RequestNewCharacter,   HandleData.HandleRequestNewCharacter },
+            { Packets.Client.UseCharacter,          HandleData.HandleUseCharacter },
+            { Packets.Client.RequestMap,            HandleData.HandleRequestMap },
+            { Packets.Client.MapOK,                 HandleData.HandleMapOK },
+            { Packets.Client.ChatMessage,           HandleData.HandleChatMessage },
+            { Packets.Client.PlayerMoving,          HandleData.HandlePlayerMoving }
         };
 
         public static void Handle(Int32 id, DataBuffer buffer) {
@@ -43,6 +44,10 @@ namespace Server.Networking {
             Send.PlayerID(id);
 
             Logger.Write(String.Format("ID: {0} has connected.", id));
+        }
+
+        internal static void PingClients(object state) {
+            Send.Ping();
         }
 
         public static void ClientDisconnected(Int32 id) {
