@@ -1,5 +1,6 @@
 ﻿using Extensions.Networking;
 using System;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
@@ -72,14 +73,28 @@ namespace Client.Networking {
             if (receive > 0) {
                 state.Data.Append(state.Buffer);
                 state.Received += receive;
-
                 var temp = new DataBuffer();
                 temp.FromArray(state.Data.ToArray());
                 var alength = temp.ReadInt32();
-                if (alength == (state.Received - 4)) {
-                    var newstate = new StateObject();
-                    this.MainSocket.BeginReceive(newstate.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), newstate);
-                    this.PacketHandler(temp);
+                if ((state.Received - 4) >= alength) {
+
+                    var work = true;
+                    while (work) {
+                        var calc = new DataBuffer();
+                        calc.FromArray(state.Data.ToArray());
+                        var length = calc.ReadInt32();
+                        if (state.Data.Length() - 4 >= length) {
+                            var buffer = new DataBuffer();
+                            buffer.FromArray(state.Data.ToArray().Skip(4).Take(length).ToArray());
+                            var data = state.Data.ToArray().Skip(4 + length).Take(state.Received - (4 + length)).ToArray();
+                            state.Data.FromArray(data);
+                            this.PacketHandler(buffer);
+                        } else {
+                            var newstate = new StateObject();
+                            this.MainSocket.BeginReceive(newstate.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), newstate);
+                            work = false;
+                        }
+                    }
                 } else {
                     this.MainSocket.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
                 }

@@ -27,6 +27,7 @@ namespace Extensions.Networking {
             return this.Stream.ToArray();
         }
         public void FromArray(Byte[] value) {
+            this.Stream = new MemoryStream();
             this.Stream.Write(value, 0, value.Length);
             this.ResetPosition();
         }

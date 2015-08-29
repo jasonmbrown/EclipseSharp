@@ -139,20 +139,31 @@ namespace Server.Networking {
                 state.Received += receive;
                 var temp = new DataBuffer();
                 temp.FromArray(state.Data.ToArray());
-                var alength = temp.ReadInt32(); ;
-                if (alength == (state.Received - 4)) {
-                    this.PacketHandler(state.Id, temp);
-                    var newstate = new StateObject();
-                    newstate.Id = state.Id;
-                    newstate.Connection = state.Connection;
-                    newstate.Data = new DataBuffer();
-                    try {
-                        newstate.Connection.BeginReceive(newstate.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), newstate);
-                    } catch { }
+                var alength = temp.ReadInt32();
+                if ((state.Received - 4) >= alength) {
+
+                    var work = true;
+                    while (work) {
+                        var calc = new DataBuffer();
+                        calc.FromArray(state.Data.ToArray());
+                        var length = calc.ReadInt32();
+                        if (state.Data.Length() - 4 >= length) {
+                            var buffer = new DataBuffer();
+                            buffer.FromArray(state.Data.ToArray().Skip(4).Take(length).ToArray());
+                            var data = state.Data.ToArray().Skip(4 + length).Take(state.Received - (4 + length)).ToArray();
+                            state.Data.FromArray(data);
+                            this.PacketHandler(state.Id, buffer);
+                        } else {
+                            var newstate = new StateObject();
+                            newstate.Id = state.Id;
+                            newstate.Connection = state.Connection;
+                            newstate.Data = new DataBuffer();
+                            state.Connection.BeginReceive(newstate.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), newstate);
+                            work = false;
+                        }
+                    }
                 } else {
-                    try {
-                        state.Connection.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
-                    } catch { }
+                    state.Connection.BeginReceive(state.Buffer, 0, StateObject.BufferSize, SocketFlags.None, new AsyncCallback(ReceiveData), state);
                 }
             }
         }
