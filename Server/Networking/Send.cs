@@ -113,40 +113,48 @@ namespace Server.Networking {
             for (var i = 0; i < Data.Players.Count; i++) {
                 if (Data.Players.ContainsKey(Data.Players.ElementAt(i).Key)) {
                     var key = Data.Players.ElementAt(i).Key;
-                    if (Data.TempPlayers[key].InGame) ChatMessage(key, sender, msg, type);
+                    if (Data.TempPlayers.ContainsKey(key)) {
+                        if (Data.TempPlayers[key].InGame) Send.ChatMessage(key, sender, msg, type);
+                    }
                 }
             }
         }
         public static void ChatMessageMap(Int32 sender, Int32 map, String msg, Enumerations.MessageType type) {
-                for (var i = 0; i < Data.Players.Count; i++) {
-                    if (Data.Players.ContainsKey(Data.Players.ElementAt(i).Key)) {
-                        var key = Data.Players.ElementAt(i).Key;
-                        if (Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Map == map && Data.TempPlayers[key].InGame) {
+            for (var i = 0; i < Data.Players.Count; i++) {
+                var key = Data.Players.ElementAt(i).Key;
+                if (Data.TempPlayers.ContainsKey(key)) {
+                    if (Data.TempPlayers[key].InGame) {
+                        if (Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Map == map) {
                             ChatMessage(key, sender, msg, type);
                         }
                     }
                 }
+            }
         }
         public static void ChatMessage(Int32 id, Int32 sender, String msg, Enumerations.MessageType type) {
             using (var buffer = new DataBuffer()) {
                 buffer.WriteInt32((Int32)Packets.Server.ChatMessage);
                 buffer.WriteByte((Byte)type);
-                switch (type) {
-                    case Enumerations.MessageType.System:
-                        buffer.WriteString(String.Format("<SYSTEM> {0}", msg));
-                    break;
-                    case Enumerations.MessageType.Error:
-                        buffer.WriteString(String.Format("<ERROR> {0}", msg));
-                    break;
-                    case Enumerations.MessageType.World:
-                        buffer.WriteString(String.Format("[W] {0}: {1}", Data.Players[sender].Characters[Data.TempPlayers[sender].CurrentCharacter].Name, msg));
-                    break;
-                    case Enumerations.MessageType.Map:
-                        buffer.WriteString(String.Format("[S] {0}: {1}", Data.Players[sender].Characters[Data.TempPlayers[sender].CurrentCharacter].Name, msg));
-                    break;
-                    case Enumerations.MessageType.Emote:
-                        buffer.WriteString(String.Format("{0} {1}", Data.Players[sender].Characters[Data.TempPlayers[sender].CurrentCharacter].Name, msg));
-                    break;
+                if (Data.TempPlayers.ContainsKey(sender) && Data.Players.ContainsKey(sender)) {
+                    if (Data.TempPlayers[sender].InGame) {
+                        switch (type) {
+                            case Enumerations.MessageType.System:
+                            buffer.WriteString(String.Format("<SYSTEM> {0}", msg));
+                            break;
+                            case Enumerations.MessageType.Error:
+                            buffer.WriteString(String.Format("<ERROR> {0}", msg));
+                            break;
+                            case Enumerations.MessageType.World:
+                            buffer.WriteString(String.Format("[W] {0}: {1}", Data.Players[sender].Characters[Data.TempPlayers[sender].CurrentCharacter].Name, msg));
+                            break;
+                            case Enumerations.MessageType.Map:
+                            buffer.WriteString(String.Format("[S] {0}: {1}", Data.Players[sender].Characters[Data.TempPlayers[sender].CurrentCharacter].Name, msg));
+                            break;
+                            case Enumerations.MessageType.Emote:
+                            buffer.WriteString(String.Format("{0} {1}", Data.Players[sender].Characters[Data.TempPlayers[sender].CurrentCharacter].Name, msg));
+                            break;
+                        }
+                    }
                 }
                 SendDataTo(id, buffer);
             }
@@ -193,7 +201,7 @@ namespace Server.Networking {
                 buffer.WriteInt32((Int32)Packets.Server.PlayerMoving);
                 buffer.WriteInt32(player);
                 for (var i = 0; i < (Int32)Enumerations.Direction.Direction_Count; i++) {
-                     buffer.WriteBoolean(Data.TempPlayers[player].IsMoving[i]);
+                    buffer.WriteBoolean(Data.TempPlayers[player].IsMoving[i]);
                 }
                 SendDataTo(id, buffer);
             }

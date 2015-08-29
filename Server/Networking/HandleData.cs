@@ -82,8 +82,12 @@ namespace Server.Networking {
             }
             for (var i = 0; i < Data.Players.Keys.Count; i++) {
                 var key = Data.Players.ElementAt(i).Key;
-                if (Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map == Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Map) {
-                    Send.PlayerMoving(key, id);
+                if (Data.TempPlayers.ContainsKey(key)) {
+                    if (Data.TempPlayers[key].InGame) {
+                        if (Data.Players[id].Characters[Data.TempPlayers[id].CurrentCharacter].Map == Data.Players[key].Characters[Data.TempPlayers[key].CurrentCharacter].Map) {
+                            Send.PlayerMoving(key, id);
+                        }
+                    }
                 }
             }
         }
