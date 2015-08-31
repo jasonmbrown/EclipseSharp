@@ -27,11 +27,12 @@ namespace Extensions.Networking {
             return this.Stream.ToArray();
         }
         public void FromArray(Byte[] value) {
-            this.Stream = new MemoryStream();
+            this.Stream = new MemoryStream(value.Length);
             this.Stream.Write(value, 0, value.Length);
             this.ResetPosition();
         }
         public void Append(Byte[] value) {
+            if (Stream.Capacity < Stream.Length + value.Length) Stream.Capacity += value.Length;
             this.Stream.Write(value, 0, value.Length);
         }
         public Int64 Length() {
@@ -42,22 +43,27 @@ namespace Extensions.Networking {
         #region Data Writing
         public void WriteByte(Byte value) {
             var data = BitConverter.GetBytes(value);
+            if (Stream.Capacity < Stream.Length + data.Length) Stream.Capacity += data.Length;
             this.Stream.Write(data, 0, 1);
         }
         public void WriteInt16(Int16 value) {
             var data = BitConverter.GetBytes(value);
+            if (Stream.Capacity < Stream.Length + data.Length) Stream.Capacity += data.Length;
             this.Stream.Write(data, 0, 2);
         }
         public void WriteInt32(Int32 value) {
             var data = BitConverter.GetBytes(value);
+            if (Stream.Capacity < Stream.Length + data.Length) Stream.Capacity += data.Length;
             this.Stream.Write(data, 0, 4);
         }
         public void WriteInt64(Int64 value) {
             var data = BitConverter.GetBytes(value);
+            if (Stream.Capacity < Stream.Length + data.Length) Stream.Capacity += data.Length;
             this.Stream.Write(data, 0, 8);
         }
         public void WriteChar(Char value) {
             var data = BitConverter.GetBytes(value);
+            if (Stream.Capacity < Stream.Length + data.Length) Stream.Capacity += data.Length;
             this.Stream.Write(data, 0, 2);
         }
         public void WriteString(String value) {
