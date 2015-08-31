@@ -102,6 +102,9 @@ namespace Client.Logic {
                     if (Data.Players[key].X < Data.Map.SizeX * 32) Data.Players[key].X += 1;
                 }
             }
+
+            // Calculate our screen Offset.
+            Graphics.UpdateOffset();
         }
 
     }

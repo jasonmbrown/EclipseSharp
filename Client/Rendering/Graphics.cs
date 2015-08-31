@@ -72,8 +72,6 @@ namespace Client.Rendering {
 
                 // Only render this if we're in-game.
                 if (Data.InGame) {
-                    // Calculate our screen Offset.
-                    Graphics.UpdateOffset();
 
                     // Render our lower layers.
                     Graphics.DrawMap(true);
