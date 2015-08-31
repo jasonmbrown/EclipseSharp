@@ -80,6 +80,13 @@ namespace Client.Logic {
             // Send the server an update.
             Send.PlayerMoving();
         }
+        public static void WindowMousePressed(MouseButtonEventArgs e) {
+
+        }
+        public static void WindowMouseReleased(MouseButtonEventArgs e) {
+
+        }
+
         public static void HandleMovement(Object e) {
             if (!Data.InGame) return;
 

@@ -9,6 +9,7 @@ using Extensions.Database;
 using Extensions;
 using System.Linq;
 using System.Threading;
+using Client.Logic;
 
 namespace Client.Rendering {
     static class Graphics {
@@ -37,6 +38,7 @@ namespace Client.Rendering {
             Screen.KeyPressed           += new EventHandler<KeyEventArgs>(WindowKeyPressed);
             Screen.KeyReleased          += new EventHandler<KeyEventArgs>(WindowKeyReleased);
             Screen.MouseButtonPressed   += new EventHandler<MouseButtonEventArgs>(WindowMousePressed);
+            Screen.MouseButtonReleased  += new EventHandler<MouseButtonEventArgs>(WindowMouseReleased);
             Screen.MouseMoved           += new EventHandler<MouseMoveEventArgs>(WindowMouseMoved);
             Screen.SetFramerateLimit(60);
 
@@ -62,6 +64,7 @@ namespace Client.Rendering {
             // Move on to rendering the window.
             Graphics.RenderScreen();
         }
+
         public static void CloseScreen() {
             WindowClosed(null, null);
         }
@@ -96,7 +99,7 @@ namespace Client.Rendering {
 
                 // If we're in the map editor, draw our map editor items on top of everything else!
                 if (Interface.CurrentUI == Interface.Windows.MapEditor) {
-                    Graphics.DrawMapEditorTileset();
+                    if (Interface.GUI.Get<TGUI.ChildWindow>("tileset").Visible) Graphics.DrawMapEditorTileset();
                 }
 
                 // Handle all screen events and render changes.
@@ -156,13 +159,16 @@ namespace Client.Rendering {
             
         }
         private static void WindowMousePressed(object sender, MouseButtonEventArgs e) {
-            
+            Input.WindowMousePressed(e);
+        }
+        private static void WindowMouseReleased(object sender, MouseButtonEventArgs e) {
+            Input.WindowMouseReleased(e);
         }
         private static void WindowKeyPressed(object sender, KeyEventArgs e) {
-            Logic.Input.WindowKeyPressed(e);
+            Input.WindowKeyPressed(e);
         }
         private static void WindowKeyReleased(object sender, KeyEventArgs e) {
-            Logic.Input.WindowKeyReleased(e);
+            Input.WindowKeyReleased(e);
         }
         private static void WindowClosed(object sender, EventArgs e) {
             // Destroy all graphical elements!.
