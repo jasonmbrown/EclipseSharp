@@ -20,7 +20,7 @@ namespace Client.Rendering {
         public static   Dictionary<Int32, TexData>   Tileset   = new Dictionary<Int32, TexData>();
         private static  Dictionary<Int32, TexData>   Sprite    = new Dictionary<Int32, TexData>();
         public static   ManualResetEvent             Loaded    = new ManualResetEvent(false);
-        private static  Vector2i                     OffSet;
+        public static   Vector2i                     OffSet;
         private static  Font                         NameFont;
         #endregion
 
@@ -109,26 +109,26 @@ namespace Client.Rendering {
         }
 
         private static void DrawMapEditorOutline() {
-            var left = new RectangleShape();
-            left.FillColor = Color.Magenta;
-            left.Size = new Vector2f(1, Data.Map.SizeY * 32);
-            left.Position = new Vector2f(Graphics.OffSet.X, Graphics.OffSet.Y);
-            Screen.Draw(left);
-            var right = new RectangleShape();
-            right.FillColor = Color.Magenta;
-            right.Size = new Vector2f(1, Data.Map.SizeY * 32);
-            right.Position = new Vector2f(Graphics.OffSet.X + Data.Map.SizeX * 32, Graphics.OffSet.Y);
-            Screen.Draw(right);
-            var top = new RectangleShape();
-            top.FillColor = Color.Magenta;
-            top.Size = new Vector2f(Data.Map.SizeX *32, 1);
-            top.Position = new Vector2f(Graphics.OffSet.X, Graphics.OffSet.Y);
-            Screen.Draw(top);
-            var bottom = new RectangleShape();
-            bottom.FillColor = Color.Magenta;
-            bottom.Size = new Vector2f(Data.Map.SizeX * 32, 1);
-            bottom.Position = new Vector2f(Graphics.OffSet.X, Graphics.OffSet.Y + Data.Map.SizeY * 32);
-            Screen.Draw(bottom);
+            var spr = new RectangleShape();
+            // Map Outline
+            spr.OutlineColor = Color.Magenta;
+            spr.OutlineThickness = 1f;
+            spr.FillColor = Color.Transparent;
+            spr.Size = new Vector2f(Data.Map.SizeX * 32, Data.Map.SizeY * 32);
+            spr.Position = new Vector2f(Graphics.OffSet.X, Graphics.OffSet.Y);
+            Screen.Draw(spr);
+
+            // Cursor Outline
+            spr.OutlineColor = Color.Blue;
+            spr.OutlineThickness = 1f;
+            spr.FillColor = Color.Transparent;
+            spr.Size = new Vector2f(32, 32);
+
+            var loc = Input.GetCurrentTile(Input.Mouse.X, Input.Mouse.Y);
+            if (loc.X >= 0 && loc.Y >= 0 && loc.X < Data.Map.SizeX && loc.Y < Data.Map.SizeY) {
+                spr.Position = new Vector2f(Graphics.OffSet.X + (loc.X * 32), Graphics.OffSet.Y + (loc.Y * 32));
+                Screen.Draw(spr);
+            }
         }
 
         private static void DrawMapEditorTileset() {
@@ -156,7 +156,7 @@ namespace Client.Rendering {
             Screen.Display();
         }
         private static void WindowMouseMoved(object sender, MouseMoveEventArgs e) {
-            
+            Input.WindowMouseMoved(e);
         }
         private static void WindowMousePressed(object sender, MouseButtonEventArgs e) {
             Input.WindowMousePressed(e);

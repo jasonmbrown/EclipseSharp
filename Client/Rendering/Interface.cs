@@ -424,17 +424,76 @@ namespace Client.Rendering {
             panel.Size = new Vector2f(Data.Settings.Graphics.ResolutionX, 20);
             panel.Position = new Vector2f(0, 0);
 
+            var label1 = panel.Add(new Label(Theme));
+            label1.Text = "Tileset:";
+            label1.Position = new Vector2f(0, 5);
+            label1.TextColor = Color.Black;
+            label1.TextSize = 14;
+
             var tileselect = panel.Add(new ComboBox(Theme), "tileselect");
             foreach (var t in Graphics.Tileset) {
                 tileselect.AddItem(String.Format("Tileset {0}", t.Key));
             }
             tileselect.SetSelectedItem(0);
+            tileselect.Position = new Vector2f(label1.Size.X + 3, 0);
             tileselect.Size = new Vector2f(120, panel.Size.Y);
+
+            var opentwindow = panel.Add(new Button(Theme), "opentwindow");
+            opentwindow.Text = "Tile Select";
+            opentwindow.Size = new Vector2f(opentwindow.Size.X, panel.Size.Y);
+            opentwindow.Position = new Vector2f(tileselect.Position.X + tileselect.Size.X + 5, 0);
+            opentwindow.LeftMouseClickedCallback += UIHandlers.MapEditor_OpenTileWindowClick;
+
+            var label2 = panel.Add(new Label(Theme));
+            label2.Text = "| Layer:";
+            label2.Position = new Vector2f(opentwindow.Position.X + opentwindow.Size.X + 10, 5);
+            label2.TextColor = Color.Black;
+            label2.TextSize = 14;
+
+            var layerselect = panel.Add(new ComboBox(Theme), "layerselect");
+            foreach (var t in Data.Map.Layers) {
+                layerselect.AddItem(t.Name);
+            }
+            layerselect.SetSelectedItem(0);
+            layerselect.Position = new Vector2f(label2.Position.X + label2.Size.X + 3, 0);
+            layerselect.Size = new Vector2f(120, panel.Size.Y);
+
+            var openlwindow = panel.Add(new Button(Theme), "openlwindow");
+            openlwindow.Text = "Layer Editor";
+            openlwindow.Size = new Vector2f(openlwindow.Size.X, panel.Size.Y);
+            openlwindow.Position = new Vector2f(layerselect.Position.X + openlwindow.Size.X + 5, 0);
+            openlwindow.LeftMouseClickedCallback += UIHandlers.MapEditor_OpenLayerWindowClick;
+
+            var save = panel.Add(new Button(Theme), "save");
+            save.Text = "Save Map";
+            save.Size = new Vector2f(save.Size.X, panel.Size.Y);
+            save.Position = new Vector2f(panel.Size.X - save.Size.X, 0);
+            save.LeftMouseClickedCallback += UIHandlers.MapEditor_SaveClick;
+
+            var cancel = panel.Add(new Button(Theme), "cancel");
+            cancel.Text = "Cancel";
+            cancel.Size = new Vector2f(save.Size.X, panel.Size.Y);
+            cancel.Position = new Vector2f(save.Position.X - (cancel.Size.X + 5), 0);
+            cancel.LeftMouseClickedCallback += UIHandlers.MapEditor_CancelClick;
 
             var tileset = GUI.Add(new ChildWindow(Theme), "tileset");
             tileset.Title = "Tile Selection";
             tileset.Size = new Vector2f(Graphics.GetTileset(1).Texture.Size.X, Data.Settings.Graphics.ResolutionY * 0.75f);
+            tileset.Position = new Vector2f(20, 40);
+            tileset.Visible = false;
+            tileset.ClosedCallback += (s, e) => { tileset.Visible = false; };
 
+            var layers = GUI.Add(new ChildWindow(Theme), "layers");
+            layers.Title = "Layer Editor";
+            layers.Size = new Vector2f(400, 310);
+            layers.Position = new Vector2f(Data.Settings.Graphics.ResolutionX - (layers.Size.X + 20), 40);
+            layers.Visible = false;
+            layers.ClosedCallback += (s, e) => { layers.Visible = false; };
+
+            var layerlist = layers.Add(new ListBox(Theme), "layerlist");
+            layerlist.Position = new Vector2f(2, 2);
+            layerlist.Size = new Vector2f(120, 300); 
+            
             CurrentUI = Windows.MapEditor;
         }
         #endregion

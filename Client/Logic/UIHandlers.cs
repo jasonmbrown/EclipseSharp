@@ -213,5 +213,21 @@ namespace Client.Logic {
             Interface.ChangeUI(Interface.Windows.Loading);
             Interface.GUI.Get<Panel>("loadpanel").Get<Label>("loadtext").Text = "Waiting for server...";
         }
+
+        internal static void MapEditor_OpenTileWindowClick(object sender, CallbackArgs e) {
+            Interface.GUI.Get<ChildWindow>("tileset").Visible = true;
+        }
+
+        internal static void MapEditor_OpenLayerWindowClick(object sender, CallbackArgs e) {
+            Interface.GUI.Get<ChildWindow>("layers").Visible = true;
+        }
+
+        internal static void MapEditor_SaveClick(object sender, CallbackArgs e) {
+            throw new NotImplementedException();
+        }
+
+        internal static void MapEditor_CancelClick(object sender, CallbackArgs e) {
+            throw new NotImplementedException();
+        }
     }
 }

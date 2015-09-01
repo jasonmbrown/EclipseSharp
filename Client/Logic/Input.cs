@@ -2,6 +2,7 @@
 using Client.Networking;
 using Client.Rendering;
 using Extensions;
+using SFML.System;
 using SFML.Window;
 using System;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace Client.Logic {
     public static class Input {
 
         public static Boolean[] DirectionPressed = new Boolean[(Int32)Enumerations.Direction.Direction_Count];
+        public static Vector2f Mouse;
 
         private static Boolean ChatVisible() {
             if (Interface.CurrentUI == Interface.Windows.Game) {
@@ -114,5 +116,15 @@ namespace Client.Logic {
             Graphics.UpdateOffset();
         }
 
+        internal static void WindowMouseMoved(MouseMoveEventArgs e) {
+            Input.Mouse.X = e.X;
+            Input.Mouse.Y = e.Y;
+        }
+
+        public static Vector2i GetCurrentTile(float mousex, float mousey) {
+            var tx = Graphics.OffSet.X > 0 ? mousex - Graphics.OffSet.X : mousex - Graphics.OffSet.X;
+            var ty = Graphics.OffSet.Y > 0 ? mousey - Graphics.OffSet.Y : mousey - Graphics.OffSet.Y;
+            return new Vector2i((Int32)tx / 32, (Int32)ty / 32);
+        }
     }
 }
