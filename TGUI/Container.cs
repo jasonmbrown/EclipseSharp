@@ -985,27 +985,26 @@ namespace TGUI
         {
             bool widgetFound = false;
 
-            // Loop through all widgets
-            foreach (Widget widget in m_Widgets)
-            {
-                // Check if the widget is visible and enabled
-                if ((widget.Visible) && (widget.Enabled))
-                {
-                    // Ask the widget if the mouse is on top of them
-                    if (widget.MouseOnWidget(x, y))
-                    {
-                        // If there already was an widget then they overlap each other
-                        if (widgetFound)
-                            theWidget.MouseNotOnWidget();
+            try {
+                // Loop through all widgets
+                foreach (Widget widget in m_Widgets) {
+                    // Check if the widget is visible and enabled
+                    if ((widget.Visible) && (widget.Enabled)) {
+                        // Ask the widget if the mouse is on top of them
+                        if (widget.MouseOnWidget(x, y)) {
+                            // If there already was an widget then they overlap each other
+                            if (widgetFound)
+                                theWidget.MouseNotOnWidget();
 
-                        // An widget is found now
-                        widgetFound = true;
+                            // An widget is found now
+                            widgetFound = true;
 
-                        // Also remember what widget should receive the event
-                        theWidget = widget;
+                            // Also remember what widget should receive the event
+                            theWidget = widget;
+                        }
                     }
                 }
-            }
+            } catch { }
 
             // If our mouse is on top of an widget then return true
             return widgetFound;

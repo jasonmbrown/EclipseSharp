@@ -478,10 +478,15 @@ namespace Client.Rendering {
 
             var tileset = GUI.Add(new ChildWindow(Theme), "tileset");
             tileset.Title = "Tile Selection";
-            tileset.Size = new Vector2f(Graphics.GetTileset(1).Texture.Size.X, Data.Settings.Graphics.ResolutionY * 0.75f);
+            tileset.Size = new Vector2f(Graphics.GetTileset(1).Texture.Size.X + 20, ((Int32)(Data.Settings.Graphics.ResolutionY * 0.75f) / 32) * 32);
             tileset.Position = new Vector2f(20, 40);
             tileset.Visible = false;
             tileset.ClosedCallback += (s, e) => { tileset.Visible = false; };
+
+            var tilescroll = tileset.Add(new Scrollbar(Theme), "tilescroll");
+            tilescroll.Size = new Vector2f(20, tileset.Size.Y - 4);
+            tilescroll.Position = new Vector2f(tileset.Size.X - 20, 2);
+            tilescroll.Maximum = (Int32)((Graphics.GetTileset(1).Texture.Size.Y / 32) - (Data.Settings.Graphics.ResolutionY * 0.75f) / 32);
 
             var layers = GUI.Add(new ChildWindow(Theme), "layers");
             layers.Title = "Layer Editor";

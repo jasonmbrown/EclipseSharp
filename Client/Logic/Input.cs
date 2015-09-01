@@ -11,8 +11,12 @@ using TGUI;
 namespace Client.Logic {
     public static class Input {
 
-        public static Boolean[] DirectionPressed = new Boolean[(Int32)Enumerations.Direction.Direction_Count];
-        public static Vector2f Mouse;
+        public static Boolean[]     DirectionPressed    = new Boolean[(Int32)Enumerations.Direction.Direction_Count];
+        public static Boolean       MousePressed;
+        public static Boolean[]     MouseButton         = new Boolean[(Int32)SFML.Window.Mouse.Button.ButtonCount];
+        public static Boolean       MousePressedOnMap;
+        public static Vector2f      Mouse;
+        public static Vector2i      SelectedTile        = new Vector2i(0, 0);
 
         private static Boolean ChatVisible() {
             if (Interface.CurrentUI == Interface.Windows.Game) {
@@ -62,6 +66,38 @@ namespace Client.Logic {
             // Send the server an update.
             if (!ChatVisible()) Send.PlayerMoving();
         }
+
+        internal static void HandleMouseClicks(object state) {
+            switch (Interface.CurrentUI) {
+
+                case Interface.Windows.MapEditor:
+                if (Input.MousePressedOnMap) {
+                    if (Input.MouseButton[(Int32)SFML.Window.Mouse.Button.Left]) {
+                        var loc = Input.GetCurrentTile(Input.Mouse.X, Input.Mouse.Y);
+                        var layer = Interface.GUI.Get<Panel>("panel").Get<ComboBox>("layerselect").GetSelectedItemIndex();
+                        var tileset = Interface.GUI.Get<Panel>("panel").Get<ComboBox>("tileselect").GetSelectedItemIndex() + 1;
+                        if (loc.X >= 0 && loc.X < Data.Map.SizeX && loc.Y >= 0 && loc.Y < Data.Map.SizeY) {
+                            Data.Map.Layers.ElementAt(layer).Tiles[loc.X, loc.Y].TileX = Input.SelectedTile.X;
+                            Data.Map.Layers.ElementAt(layer).Tiles[loc.X, loc.Y].TileY = Input.SelectedTile.Y;
+                            Data.Map.Layers.ElementAt(layer).Tiles[loc.X, loc.Y].Tileset = tileset;
+                        }
+                    }
+                    if (Input.MouseButton[(Int32)SFML.Window.Mouse.Button.Right]) {
+                        var loc = Input.GetCurrentTile(Input.Mouse.X, Input.Mouse.Y);
+                        var layer = Interface.GUI.Get<Panel>("panel").Get<ComboBox>("layerselect").GetSelectedItemIndex();
+                        var tileset = Interface.GUI.Get<Panel>("panel").Get<ComboBox>("tileselect").GetSelectedItemIndex() + 1;
+                        if (loc.X >= 0 && loc.X < Data.Map.SizeX && loc.Y >= 0 && loc.Y < Data.Map.SizeY) {
+                            Data.Map.Layers.ElementAt(layer).Tiles[loc.X, loc.Y].TileX = 0;
+                            Data.Map.Layers.ElementAt(layer).Tiles[loc.X, loc.Y].TileY = 0;
+                            Data.Map.Layers.ElementAt(layer).Tiles[loc.X, loc.Y].Tileset = 0;
+                        }
+                    }
+                }
+                break;
+
+            }
+        }
+
         public static void WindowKeyReleased(KeyEventArgs e) {
             if (!Data.InGame) return;
             // Handle our keystates and stop our movement if applicable.
@@ -83,10 +119,31 @@ namespace Client.Logic {
             Send.PlayerMoving();
         }
         public static void WindowMousePressed(MouseButtonEventArgs e) {
+            Input.MouseButton[(Int32)e.Button] = true;
+            Input.MousePressed = true;
+            switch (Interface.CurrentUI) {
 
+                case Interface.Windows.MapEditor:
+                var tileselect  = Interface.GUI.Get<ChildWindow>("tileset");
+                var layereditor = Interface.GUI.Get<ChildWindow>("layers");
+                if (Input.Mouse.X > tileselect.Position.X && Input.Mouse.X < tileselect.Position.X + tileselect.Size.X &&
+                    Input.Mouse.Y > tileselect.Position.Y && Input.Mouse.Y < tileselect.Position.Y + tileselect.Size.Y) {
+                    Input.MousePressedOnMap = false;
+                } else 
+                if (Input.Mouse.X > layereditor.Position.X && Input.Mouse.X < layereditor.Position.X + layereditor.Size.X &&
+                    Input.Mouse.Y > layereditor.Position.Y && Input.Mouse.Y < layereditor.Position.Y + layereditor.Size.Y) {
+                    Input.MousePressedOnMap = false;
+                } else {
+                    Input.MousePressedOnMap = true;
+                }
+                break;
+
+            }
         }
         public static void WindowMouseReleased(MouseButtonEventArgs e) {
-
+            Input.MousePressed                  = false;
+            Input.MousePressedOnMap             = false;
+            Input.MouseButton[(Int32)e.Button]  = false;
         }
 
         public static void HandleMovement(Object e) {

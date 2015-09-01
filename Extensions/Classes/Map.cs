@@ -24,8 +24,10 @@ namespace Extensions.Database {
             this.Revision       = 1;
             var l1 = new LayerData(this.SizeX, this.SizeY);
             l1.Name = "Ground";
+            l1.BelowPlayer = true;
             var l2 = new LayerData(this.SizeX, this.SizeY);
             l2.Name = "Mask";
+            l2.BelowPlayer = true;
             var l3 = new LayerData(this.SizeX, this.SizeY);
             l3.Name = "Fringe";
             l2.BelowPlayer = false;
@@ -67,7 +69,7 @@ namespace Extensions.Database {
 
         #region Constructors
         public TileData() {
-            this.TileX       = 0;
+            this.TileX      = 0;
             this.TileY      = 0;
             this.Tileset    = 0;
         }

@@ -140,8 +140,19 @@ namespace Client.Rendering {
             var yoffset = window.Position.Y + window.TitleBarHeight + window.Borders.Top;
 
             spr.Position = new Vector2f(xoffset, yoffset);
-            spr.TextureRect = new IntRect(new Vector2i(0, 0), new Vector2i((Int32)spr.Texture.Size.X, (Int32)window.Size.Y - (Int32)window.Borders.Top));
+            spr.TextureRect = new IntRect(new Vector2i(0, (Interface.GUI.Get<TGUI.ChildWindow>("tileset").Get<TGUI.Scrollbar>("tilescroll").Value * 32)), new Vector2i((Int32)spr.Texture.Size.X, (Int32)(window.Size.Y - window.Borders.Top)));
             Screen.Draw(spr);
+
+            if (Input.SelectedTile.Y >= Interface.GUI.Get<TGUI.ChildWindow>("tileset").Get<TGUI.Scrollbar>("tilescroll").Value) {
+                var rec = new RectangleShape();
+                rec.Size = new Vector2f(32, 32);
+                rec.OutlineThickness = 1;
+                rec.OutlineColor = Color.Magenta;
+                rec.FillColor = Color.Transparent;
+                rec.Position = new Vector2f(xoffset + Input.SelectedTile.X * 32, yoffset + Input.SelectedTile.Y * 32);
+                Screen.Draw(rec);
+            }
+
         }
 
         private static void RenderScreenOnce() {
