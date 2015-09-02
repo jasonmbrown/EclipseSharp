@@ -29,11 +29,9 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.scrlTileset = new System.Windows.Forms.VScrollBar();
             this.cmbTilesets = new System.Windows.Forms.ComboBox();
-            this.picTileset = new System.Windows.Forms.PictureBox();
             this.lstMaps = new System.Windows.Forms.ListBox();
             this.scrlMapVertical = new System.Windows.Forms.VScrollBar();
             this.scrlMapHorizontal = new System.Windows.Forms.HScrollBar();
-            this.picMap = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -42,8 +40,6 @@
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picMap)).BeginInit();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -80,7 +76,6 @@
             // 
             this.splitContainer1.Panel2.Controls.Add(this.scrlMapVertical);
             this.splitContainer1.Panel2.Controls.Add(this.scrlMapHorizontal);
-            this.splitContainer1.Panel2.Controls.Add(this.picMap);
             this.splitContainer1.Size = new System.Drawing.Size(1025, 562);
             this.splitContainer1.SplitterDistance = 261;
             this.splitContainer1.TabIndex = 3;
@@ -96,7 +91,6 @@
             // 
             this.splitContainer2.Panel1.Controls.Add(this.scrlTileset);
             this.splitContainer2.Panel1.Controls.Add(this.cmbTilesets);
-            this.splitContainer2.Panel1.Controls.Add(this.picTileset);
             // 
             // splitContainer2.Panel2
             // 
@@ -122,15 +116,6 @@
             this.cmbTilesets.Name = "cmbTilesets";
             this.cmbTilesets.Size = new System.Drawing.Size(259, 24);
             this.cmbTilesets.TabIndex = 1;
-            // 
-            // picTileset
-            // 
-            this.picTileset.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picTileset.Location = new System.Drawing.Point(0, 0);
-            this.picTileset.Name = "picTileset";
-            this.picTileset.Size = new System.Drawing.Size(259, 384);
-            this.picTileset.TabIndex = 0;
-            this.picTileset.TabStop = false;
             // 
             // lstMaps
             // 
@@ -158,15 +143,6 @@
             this.scrlMapHorizontal.Size = new System.Drawing.Size(758, 21);
             this.scrlMapHorizontal.TabIndex = 1;
             // 
-            // picMap
-            // 
-            this.picMap.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picMap.Location = new System.Drawing.Point(0, 0);
-            this.picMap.Name = "picMap";
-            this.picMap.Size = new System.Drawing.Size(758, 560);
-            this.picMap.TabIndex = 0;
-            this.picMap.TabStop = false;
-            // 
             // MainEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -189,8 +165,6 @@
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.picTileset)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picMap)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -204,10 +178,8 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.VScrollBar scrlTileset;
         private System.Windows.Forms.ComboBox cmbTilesets;
-        private System.Windows.Forms.PictureBox picTileset;
         private System.Windows.Forms.ListBox lstMaps;
         private System.Windows.Forms.VScrollBar scrlMapVertical;
         private System.Windows.Forms.HScrollBar scrlMapHorizontal;
-        private System.Windows.Forms.PictureBox picMap;
     }
 }

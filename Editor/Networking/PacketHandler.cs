@@ -23,6 +23,9 @@ namespace Editor.Networking {
                 }));
             } else {
                 MessageBox.Show("Could not connect to server.", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Program.FrmLogin.BeginInvoke((Action)(() => {
+                    Program.FrmLogin.Close();
+                }));
             }
         }
 
@@ -32,7 +35,10 @@ namespace Editor.Networking {
         }
 
         internal static void HandleDisconnected() {
-            
+            MessageBox.Show("Lost connection to the server.", "Connection Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            Program.FrmLogin.BeginInvoke((Action)(() => {
+                Program.FrmLogin.Close();
+            }));
         }
 
         internal static void PingServer(object state) {

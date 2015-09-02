@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using Editor.Networking;
 using Editor.Database;
 using System.Threading;
+using Editor.Graphics;
 
 namespace Editor {
     static class Program {
@@ -26,6 +27,9 @@ namespace Editor {
 
             // Load our application settings.
             Data.LoadSettings();
+
+            // Initialize local data.
+            Rendering.InitGraphics();
 
             // Set up our networking.
             Program.NetworkClient.ConnectedHandler      += PacketHandler.HandleConnected;
