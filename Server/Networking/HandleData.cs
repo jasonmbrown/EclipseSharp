@@ -14,6 +14,7 @@ namespace Server.Networking {
             // Handles a user's request to login.
             var username = buffer.ReadString().Trim();
             var password = buffer.ReadString().Trim();
+            var isEditor = buffer.ReadBoolean();
 
             // Check if the user isn't sending too long/short data.
             if (username.Trim().Length < Data.Settings.MinUsernameChar || username.Trim().Length > Data.Settings.MaxUsernameChar || password.Trim().Length < Data.Settings.MinPasswordChar || password.Trim().Length > Data.Settings.MaxPasswordChar) {
@@ -37,6 +38,13 @@ namespace Server.Networking {
                 return;
             }
 
+            // Is the account allowed to log in?
+            if (isEditor && Data.Players[id].UserRank < (Int32)Enumerations.Ranks.Developer) {
+                Send.AlertMessage(id, "Invalid Username/Password!");    // We're not going to tell them the real reason.
+                Data.Players[id] = new Extensions.Database.Player();
+                return;
+            }
+
             // Send our OK.
             Logger.Write(String.Format("ID: {0} has logged in as {1}", id, Data.Players[id].Username));
             Send.LoginOK(id);
@@ -50,28 +58,45 @@ namespace Server.Networking {
                     }
             }
             if (oldclient != 0) {
-                Send.AlertMessage(oldclient, "Someone else has logged onto your account!");
-                Logger.Write(String.Format("ID: {0} conflicts with a login at ID: {1}, Disconnecting ID: {1}", id, oldclient));
-                Data.SavePlayer(oldclient);
-                // NOTE: the user is still logged on until they get this message, we're saving their data on purpose.
-                // Their data will now be saved twice, but we can safely load it.
-                Data.LoadPlayer(id, username.ToLower());
-                // Now remove the old player from the world by force.
-                Program.Server.DisconnectClient(oldclient);
+                if (!isEditor && Data.TempPlayers[oldclient].InGame) {
+                    Send.AlertMessage(oldclient, "Someone else has logged onto your account!");
+                    Logger.Write(String.Format("ID: {0} conflicts with a login at ID: {1}, Disconnecting ID: {1}", id, oldclient));
+                    Data.SavePlayer(oldclient);
+                    // NOTE: the user is still logged on until they get this message, we're saving their data on purpose.
+                    // Their data will now be saved twice, but we can safely load it.
+                    Data.LoadPlayer(id, username.ToLower());
+                    // Now remove the old player from the world by force.
+                    Program.Server.DisconnectClient(oldclient);
+                } else if (isEditor && Data.TempPlayers[oldclient].InEditor) {
+                    Send.AlertMessage(oldclient, "Someone else has logged onto your account!");
+                    Logger.Write(String.Format("ID: {0} conflicts with a login at ID: {1}, Disconnecting ID: {1}", id, oldclient));
+                    Data.SavePlayer(oldclient);
+                    // NOTE: the user is still logged on until they get this message, we're saving their data on purpose.
+                    // Their data will now be saved twice, but we can safely load it.
+                    Data.LoadPlayer(id, username.ToLower());
+                    // Now remove the old player from the world by force.
+                    Program.Server.DisconnectClient(oldclient);
+                } else {
+                    Logger.Write(String.Format("ID: {0} conflicts with a login at ID: {1}, but are in an editor and client", id, oldclient));
+                }
             }
 
-            // Check if they have at least one character.
-            var haschars = false;
-            foreach(var chr in Data.Players[id].Characters) {
-                if (chr.Name.Length > 0) haschars = true;
-            }
+            if (!isEditor) {
+                // Check if they have at least one character.
+                var haschars = false;
+                foreach (var chr in Data.Players[id].Characters) {
+                    if (chr.Name.Length > 0) haschars = true;
+                }
 
-            // If we have characters, show character select.
-            // Otherwise force the user to make a new character.
-            if (haschars) {
-                Send.SelectCharacterData(id);
+                // If we have characters, show character select.
+                // Otherwise force the user to make a new character.
+                if (haschars) {
+                    Send.SelectCharacterData(id);
+                } else {
+                    Send.NewCharacterData(id);
+                }
             } else {
-                Send.NewCharacterData(id);
+                Data.TempPlayers[id].InEditor = true;
             }
 
         }

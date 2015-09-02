@@ -33,7 +33,7 @@ namespace Extensions {
             PlayerData,
             RemovePlayer,
             PlayerMoving,
-            MapEditorData
+            MapEditorData,
         }
 
     }

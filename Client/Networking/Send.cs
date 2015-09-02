@@ -37,6 +37,7 @@ namespace Client.Networking {
                 buffer.WriteInt32((Int32)Packets.Client.Login);
                 buffer.WriteString(username);
                 buffer.WriteString(Password);
+                buffer.WriteBoolean(false);     //Signifies we're a client, not an editor.
                 SendData(buffer);
             }
         }
