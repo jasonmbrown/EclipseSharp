@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Editor.Networking;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -17,6 +18,17 @@ namespace Editor {
             Program.FrmLogin.BeginInvoke((Action)(()=> {
                 Program.FrmLogin.Close();
             }));
+        }
+
+        private void MainEditor_Load(object sender, EventArgs e) {
+            // Request our map list.
+            Send.RequestMapList();
+        }
+        public void ClearMaps() {
+            lstMaps.Items.Clear();
+        }
+        public void AddMap(String name) {
+            lstMaps.Items.Add(name);
         }
     }
 }

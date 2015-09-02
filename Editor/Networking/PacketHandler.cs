@@ -11,7 +11,8 @@ namespace Editor.Networking {
         private static Dictionary<Packets.Server, Action<DataBuffer>> Handlers = new Dictionary<Packets.Server, Action<DataBuffer>>() {
             { Packets.Server.Ping,                  (b)=> { /* No actual data to process here, sorry! */ } },
             { Packets.Server.LoginOk,               HandleData.HandleLoginOk },
-            { Packets.Server.PlayerId,              HandleData.HandlePlayerId }
+            { Packets.Server.PlayerId,              HandleData.HandlePlayerId },
+            { Packets.Server.MapList,               HandleData.HandleMapList }
 
         };
 

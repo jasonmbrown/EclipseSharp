@@ -101,6 +101,10 @@ namespace Server.Networking {
 
         }
 
+        internal static void HandleRequestMapList(Int32 id, DataBuffer buffer) {
+            Send.MapList(id);
+        }
+
         internal static void HandlePlayerMoving(Int32 id, DataBuffer buffer) {
             for (var i = 0; i < (Int32)Enumerations.Direction.Direction_Count; i++) {
                 Data.TempPlayers[id].IsMoving[i] = buffer.ReadBoolean();

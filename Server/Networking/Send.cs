@@ -131,6 +131,18 @@ namespace Server.Networking {
                 }
             }
         }
+
+        internal static void MapList(int id) {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Server.MapList);
+                buffer.WriteInt32(Data.Map.Count);
+                foreach (var m in Data.Map) {
+                    buffer.WriteString(m.Value.Name);
+                }
+                SendDataTo(id, buffer);
+            }
+        }
+
         public static void ChatMessage(Int32 id, Int32 sender, String msg, Enumerations.MessageType type) {
             if (Data.TempPlayers.ContainsKey(sender) && Data.Players.ContainsKey(sender)) {
                 using (var buffer = new DataBuffer()) {

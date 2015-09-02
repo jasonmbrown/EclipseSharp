@@ -18,6 +18,13 @@ namespace Editor.Networking {
             }
         }
 
+        public static void RequestMapList() {
+            using (var buffer = new DataBuffer()) {
+                buffer.WriteInt32((Int32)Packets.Client.RequestMapList);
+                SendData(buffer);
+            }
+        }
+
         public static void Login(String username, String Password) {
             using (var buffer = new DataBuffer()) {
                 buffer.WriteInt32((Int32)Packets.Client.Login);

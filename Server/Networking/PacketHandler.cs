@@ -23,7 +23,8 @@ namespace Server.Networking {
             { Packets.Client.RequestMap,            HandleData.HandleRequestMap },
             { Packets.Client.MapOK,                 HandleData.HandleMapOK },
             { Packets.Client.ChatMessage,           HandleData.HandleChatMessage },
-            { Packets.Client.PlayerMoving,          HandleData.HandlePlayerMoving }
+            { Packets.Client.PlayerMoving,          HandleData.HandlePlayerMoving },
+            { Packets.Client.RequestMapList,        HandleData.HandleRequestMapList }
         };
 
         public static void Handle(Int32 id, DataBuffer buffer) {

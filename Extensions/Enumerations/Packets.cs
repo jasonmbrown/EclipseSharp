@@ -14,7 +14,8 @@ namespace Extensions {
             MapOK,
             RequestMap,
             ChatMessage,
-            PlayerMoving
+            PlayerMoving,
+            RequestMapList
         }
 
         public enum Server {
@@ -34,6 +35,7 @@ namespace Extensions {
             RemovePlayer,
             PlayerMoving,
             MapEditorData,
+            MapList
         }
 
     }
